@@ -21,7 +21,9 @@ class AppState extends ChangeNotifier {
     if (_subjects.isEmpty) return 0.0;
     double sum =
         _subjects.fold(0.0, (sum, subject) => sum + subject.averageGrade);
-    return sum / _subjects.length;
+
+    int lengthWithout0 = _subjects.where((subject) => subject.averageGrade != 0).length;
+    return sum / lengthWithout0; //_subjects.length;
   }
 
   double get progressToTarget {
@@ -91,7 +93,7 @@ class AppState extends ChangeNotifier {
         final List<dynamic> decoded = json.decode(subjectsJson);
         _subjects = decoded.map((s) => Subject.fromJson(s)).toList();
       } else if (isFirstLaunch) {
-        _subjects = _createInitialSubjects();
+        _subjects = _createInitialSubjects(); // TODO: show setup screen for selection
         await prefs.setBool('isFirstLaunch', false);
         _saveData();
       }

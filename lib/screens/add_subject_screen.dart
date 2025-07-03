@@ -25,7 +25,7 @@ class _AddSubjectScreenState extends State<AddSubjectScreen> {
     Colors.teal,
     Colors.indigo,
     Colors.pink,
-  ];
+  ]; //TODO: add other colors and a widget or something where one can select a custom color
 
   @override
   Widget build(BuildContext context) {
@@ -119,6 +119,7 @@ class _AddSubjectScreenState extends State<AddSubjectScreen> {
       name: _nameController.text.trim(),
       grades: [],
       color: _selectedColor,
+      isLk: false //TODO add islk switch or something like that
     );
 
     Provider.of<AppState>(context, listen: false).addSubject(subject);
