@@ -11,18 +11,21 @@ class AppState extends ChangeNotifier {
   double _targetGrade = 15.0;
   bool _isDarkMode = false;
   String _currentSemester = '1. Halbjahr 2024/25';
+  bool _isFirstLaunch = true;
 
   List<Subject> get subjects => _subjects;
   double get targetGrade => _targetGrade;
   bool get isDarkMode => _isDarkMode;
   String get currentSemester => _currentSemester;
+  bool get isFirstLaunch => _isFirstLaunch;
 
   double get overallAverage {
     if (_subjects.isEmpty) return 0.0;
     double sum =
         _subjects.fold(0.0, (sum, subject) => sum + subject.averageGrade);
 
-    int lengthWithout0 = _subjects.where((subject) => subject.averageGrade != 0).length;
+    int lengthWithout0 =
+        _subjects.where((subject) => subject.averageGrade != 0).length;
     return sum / lengthWithout0; //_subjects.length;
   }
 
@@ -32,6 +35,12 @@ class AppState extends ChangeNotifier {
 
   void setDarkMode(bool value) {
     _isDarkMode = value;
+    notifyListeners();
+    _saveData();
+  }
+
+  void setFirstLaunch(bool value) {
+    _isFirstLaunch = value;
     notifyListeners();
     _saveData();
   }
@@ -81,7 +90,7 @@ class AppState extends ChangeNotifier {
       final prefs = await SharedPreferences.getInstance();
       final subjectsJson = prefs.getString('subjects');
       final target = prefs.getDouble('targetGrade') ?? 15.0;
-      final isFirstLaunch = prefs.getBool('isFirstLaunch') ?? true;
+      _isFirstLaunch = prefs.getBool('isFirstLaunch') ?? true;
       final isDark = prefs.getBool('isDarkMode') ?? false;
       final semester =
           prefs.getString('currentSemester') ?? '1. Halbjahr 2024/25';
@@ -92,11 +101,12 @@ class AppState extends ChangeNotifier {
       if (subjectsJson != null) {
         final List<dynamic> decoded = json.decode(subjectsJson);
         _subjects = decoded.map((s) => Subject.fromJson(s)).toList();
-      } else if (isFirstLaunch) {
+      }
+      /*else if (isFirstLaunch) {
         _subjects = _createInitialSubjects(); // TODO: show setup screen for selection
         await prefs.setBool('isFirstLaunch', false);
         _saveData();
-      }
+      }*/
 
       _targetGrade = target;
       notifyListeners();
@@ -105,7 +115,7 @@ class AppState extends ChangeNotifier {
     }
   }
 
-  List<Subject> _createInitialSubjects() {
+  /*List<Subject> _createInitialSubjects() {
     return [
       Subject(
         id: 'deutsch-initial',
@@ -120,13 +130,14 @@ class AppState extends ChangeNotifier {
         grades: [],
       ),
     ];
-  }
+  }*/
 
   Future<void> _saveData() async {
     try {
       final prefs = await SharedPreferences.getInstance();
       final subjectsJson =
           json.encode(_subjects.map((s) => s.toJson()).toList());
+      await prefs.setBool('isFirstLaunch', _isFirstLaunch);
       await prefs.setString('subjects', subjectsJson);
       await prefs.setDouble('targetGrade', _targetGrade);
       await prefs.setBool('isDarkMode', _isDarkMode);
@@ -134,5 +145,20 @@ class AppState extends ChangeNotifier {
     } catch (e) {
       print('Fehler beim Speichern der Daten: $e');
     }
+  }
+
+  void updateStuff() {
+    notifyListeners();
+    _saveData();
+  }
+
+  void removeGradeFromSubject(Subject subject, String gradeId) {
+    bool isgrade(Grade grade) {
+      return grade.id == gradeId;
+    }
+
+    subject.grades.removeWhere(isgrade);
+    notifyListeners();
+    _saveData();
   }
 }

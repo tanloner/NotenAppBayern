@@ -96,9 +96,11 @@ class SemicircleProgressPainter extends CustomPainter {
       ..strokeCap = StrokeCap.round;
 
     canvas.drawArc(
-      Rect.fromCircle(center: center, radius: radius), pi,
+      Rect.fromCircle(center: center, radius: radius),
       pi,
-      false, backgroundPaint,
+      pi,
+      false,
+      backgroundPaint,
     );
 
     final progressPaint = Paint()
@@ -108,9 +110,11 @@ class SemicircleProgressPainter extends CustomPainter {
       ..strokeCap = StrokeCap.round;
 
     canvas.drawArc(
-      Rect.fromCircle(center: center, radius: radius), pi,
+      Rect.fromCircle(center: center, radius: radius),
+      pi,
       pi * progress,
-      false, progressPaint,
+      false,
+      progressPaint,
     );
   }
 

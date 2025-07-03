@@ -22,11 +22,8 @@ class StatisticsScreen extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                // Gesamtübersicht
                 _buildOverviewCard(context, appState),
                 const SizedBox(height: 20),
-
-                // Fach Details
                 const Text(
                   'Detailübersicht der Fächer',
                   style: TextStyle(

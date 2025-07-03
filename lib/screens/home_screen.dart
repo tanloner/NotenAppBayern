@@ -67,7 +67,6 @@ class HomeScreen extends StatelessWidget {
                     itemCount: subjects.length + 1,
                     itemBuilder: (context, index) {
                       if (index == subjects.length) {
-                        // Add Subject Button
                         return Padding(
                           padding: const EdgeInsets.only(top: 16),
                           child: SizedBox(

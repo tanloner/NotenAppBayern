@@ -115,12 +115,12 @@ class _AddSubjectScreenState extends State<AddSubjectScreen> {
     }
 
     final subject = Subject(
-      id: const Uuid().v4(),
-      name: _nameController.text.trim(),
-      grades: [],
-      color: _selectedColor,
-      isLk: false //TODO add islk switch or something like that
-    );
+        id: const Uuid().v4(),
+        name: _nameController.text.trim(),
+        grades: [],
+        color: _selectedColor,
+        isLk: false //TODO add islk switch or something like that
+        );
 
     Provider.of<AppState>(context, listen: false).addSubject(subject);
     Navigator.pop(context);

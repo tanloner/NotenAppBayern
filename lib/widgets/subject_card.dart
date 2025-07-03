@@ -43,8 +43,6 @@ class SubjectCard extends StatelessWidget {
                 ),
               ),
               const SizedBox(width: 16),
-
-              // Fach Info
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -67,8 +65,6 @@ class SubjectCard extends StatelessWidget {
                   ],
                 ),
               ),
-
-              // Durchschnitt
               Column(
                 crossAxisAlignment: CrossAxisAlignment.end,
                 children: [
@@ -89,7 +85,6 @@ class SubjectCard extends StatelessWidget {
                   ),
                 ],
               ),
-
               const SizedBox(width: 8),
               const Icon(
                 Icons.arrow_forward_ios,
