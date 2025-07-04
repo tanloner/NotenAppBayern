@@ -5,28 +5,52 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 import '../models/grade.dart';
 import '../models/subject.dart';
+import '../models/calendar_event.dart';
 
 class AppState extends ChangeNotifier {
   List<Subject> _subjects = [];
+  List<CalendarEvent> _calendarEvents = [];
   double _targetGrade = 15.0;
   bool _isDarkMode = false;
   String _currentSemester = '1. Halbjahr 2024/25';
   bool _isFirstLaunch = true;
 
   List<Subject> get subjects => _subjects;
+  List<CalendarEvent> get calendarEvents => _calendarEvents;
   double get targetGrade => _targetGrade;
   bool get isDarkMode => _isDarkMode;
   String get currentSemester => _currentSemester;
   bool get isFirstLaunch => _isFirstLaunch;
 
+  // Get upcoming events (next 2 weeks)
+  List<CalendarEvent> get upcomingEvents {
+    final now = DateTime.now();
+    final twoWeeksFromNow = now.add(const Duration(days: 14));
+
+    return _calendarEvents.where((event) {
+      return event.date.isAfter(now.subtract(const Duration(days: 1))) &&
+          event.date.isBefore(twoWeeksFromNow.add(const Duration(days: 1)));
+    }).toList()
+      ..sort((a, b) => a.date.compareTo(b.date));
+  }
+
+  // Get events for a specific date
+  List<CalendarEvent> getEventsForDate(DateTime date) {
+    return _calendarEvents.where((event) {
+      return event.date.year == date.year &&
+          event.date.month == date.month &&
+          event.date.day == date.day;
+    }).toList();
+  }
+
   double get overallAverage {
     if (_subjects.isEmpty) return 0.0;
     double sum =
-        _subjects.fold(0.0, (sum, subject) => sum + subject.averageGrade);
+    _subjects.fold(0.0, (sum, subject) => sum + subject.averageGrade);
 
     int lengthWithout0 =
         _subjects.where((subject) => subject.averageGrade != 0).length;
-    return sum / lengthWithout0; //_subjects.length;
+    return lengthWithout0 > 0 ? sum / lengthWithout0 : 0.0;
   }
 
   double get progressToTarget {
@@ -59,6 +83,8 @@ class AppState extends ChangeNotifier {
 
   void removeSubject(String subjectId) {
     _subjects.removeWhere((subject) => subject.id == subjectId);
+    // Also remove calendar events linked to this subject
+    _calendarEvents.removeWhere((event) => event.subjectId == subjectId);
     notifyListeners();
     _saveData();
   }
@@ -79,6 +105,38 @@ class AppState extends ChangeNotifier {
     _saveData();
   }
 
+  void removeGradeFromSubject(Subject subject, String gradeId) {
+    bool isgrade(Grade grade) {
+      return grade.id == gradeId;
+    }
+
+    subject.grades.removeWhere(isgrade);
+    notifyListeners();
+    _saveData();
+  }
+
+  // Calendar Event Methods
+  void addCalendarEvent(CalendarEvent event) {
+    _calendarEvents.add(event);
+    notifyListeners();
+    _saveData();
+  }
+
+  void removeCalendarEvent(String eventId) {
+    _calendarEvents.removeWhere((event) => event.id == eventId);
+    notifyListeners();
+    _saveData();
+  }
+
+  void updateCalendarEvent(CalendarEvent updatedEvent) {
+    int index = _calendarEvents.indexWhere((e) => e.id == updatedEvent.id);
+    if (index != -1) {
+      _calendarEvents[index] = updatedEvent;
+      notifyListeners();
+      _saveData();
+    }
+  }
+
   void setTargetGrade(double target) {
     _targetGrade = target;
     notifyListeners();
@@ -89,6 +147,7 @@ class AppState extends ChangeNotifier {
     try {
       final prefs = await SharedPreferences.getInstance();
       final subjectsJson = prefs.getString('subjects');
+      final eventsJson = prefs.getString('calendarEvents');
       final target = prefs.getDouble('targetGrade') ?? 15.0;
       _isFirstLaunch = prefs.getBool('isFirstLaunch') ?? true;
       final isDark = prefs.getBool('isDarkMode') ?? false;
@@ -102,11 +161,11 @@ class AppState extends ChangeNotifier {
         final List<dynamic> decoded = json.decode(subjectsJson);
         _subjects = decoded.map((s) => Subject.fromJson(s)).toList();
       }
-      /*else if (isFirstLaunch) {
-        _subjects = _createInitialSubjects(); // TODO: show setup screen for selection
-        await prefs.setBool('isFirstLaunch', false);
-        _saveData();
-      }*/
+
+      if (eventsJson != null) {
+        final List<dynamic> decoded = json.decode(eventsJson);
+        _calendarEvents = decoded.map((e) => CalendarEvent.fromJson(e)).toList();
+      }
 
       _targetGrade = target;
       notifyListeners();
@@ -115,30 +174,17 @@ class AppState extends ChangeNotifier {
     }
   }
 
-  /*List<Subject> _createInitialSubjects() {
-    return [
-      Subject(
-        id: 'deutsch-initial',
-        name: 'Deutsch',
-        color: Colors.red,
-        grades: [],
-      ),
-      Subject(
-        id: 'mathe-initial',
-        name: 'Mathematik',
-        color: Colors.blue,
-        grades: [],
-      ),
-    ];
-  }*/
-
   Future<void> _saveData() async {
     try {
       final prefs = await SharedPreferences.getInstance();
       final subjectsJson =
-          json.encode(_subjects.map((s) => s.toJson()).toList());
+      json.encode(_subjects.map((s) => s.toJson()).toList());
+      final eventsJson =
+      json.encode(_calendarEvents.map((e) => e.toJson()).toList());
+
       await prefs.setBool('isFirstLaunch', _isFirstLaunch);
       await prefs.setString('subjects', subjectsJson);
+      await prefs.setString('calendarEvents', eventsJson);
       await prefs.setDouble('targetGrade', _targetGrade);
       await prefs.setBool('isDarkMode', _isDarkMode);
       await prefs.setString('currentSemester', _currentSemester);
@@ -148,16 +194,6 @@ class AppState extends ChangeNotifier {
   }
 
   void updateStuff() {
-    notifyListeners();
-    _saveData();
-  }
-
-  void removeGradeFromSubject(Subject subject, String gradeId) {
-    bool isgrade(Grade grade) {
-      return grade.id == gradeId;
-    }
-
-    subject.grades.removeWhere(isgrade);
     notifyListeners();
     _saveData();
   }

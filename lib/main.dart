@@ -5,6 +5,7 @@ import 'auth_gate.dart';
 import 'models/subject.dart';
 import 'providers/app_state.dart';
 import 'screens/add_subject_screen.dart';
+import 'screens/calendar_screen.dart';
 import 'screens/home_screen.dart';
 import 'screens/settings_screen.dart';
 import 'screens/statistics_screen.dart';
@@ -47,6 +48,7 @@ class NotesApp extends StatelessWidget {
         '/statistics': (context) => const StatisticsScreen(),
         '/add-subject': (context) => const AddSubjectScreen(),
         '/settings': (context) => const SettingsScreen(),
+        '/calendar': (context) => const CalendarScreen(),
       },
       onGenerateRoute: (settings) {
         if (settings.name == '/subject-detail') {
