@@ -22,7 +22,6 @@ class AppState extends ChangeNotifier {
   String get currentSemester => _currentSemester;
   bool get isFirstLaunch => _isFirstLaunch;
 
-  // Get upcoming events (next 2 weeks)
   List<CalendarEvent> get upcomingEvents {
     final now = DateTime.now();
     final twoWeeksFromNow = now.add(const Duration(days: 14));
@@ -34,7 +33,6 @@ class AppState extends ChangeNotifier {
       ..sort((a, b) => a.date.compareTo(b.date));
   }
 
-  // Get events for a specific date
   List<CalendarEvent> getEventsForDate(DateTime date) {
     return _calendarEvents.where((event) {
       return event.date.year == date.year &&
@@ -83,7 +81,6 @@ class AppState extends ChangeNotifier {
 
   void removeSubject(String subjectId) {
     _subjects.removeWhere((subject) => subject.id == subjectId);
-    // Also remove calendar events linked to this subject
     _calendarEvents.removeWhere((event) => event.subjectId == subjectId);
     notifyListeners();
     _saveData();
@@ -115,7 +112,6 @@ class AppState extends ChangeNotifier {
     _saveData();
   }
 
-  // Calendar Event Methods
   void addCalendarEvent(CalendarEvent event) {
     _calendarEvents.add(event);
     notifyListeners();

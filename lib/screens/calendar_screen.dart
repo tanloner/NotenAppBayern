@@ -136,12 +136,10 @@ class _CalendarScreenState extends State<CalendarScreen> {
 
     final days = <Widget>[];
 
-    // Add empty cells for days before the first day of the month
     for (int i = 1; i < firstDayWeekday; i++) {
       days.add(const SizedBox.shrink());
     }
 
-    // Add days of the month
     for (int day = 1; day <= daysInMonth; day++) {
       final date = DateTime(month.year, month.month, day);
       final events = appState.getEventsForDate(date);
