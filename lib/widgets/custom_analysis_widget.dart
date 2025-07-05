@@ -198,7 +198,9 @@ class _CustomAnalysisWidgetState extends State<CustomAnalysisWidget> {
                       line.startsWith('DATA') ||
                       line.startsWith('MATH') ||
                       line.startsWith('LIST') ||
-                      line.startsWith('VISUALIZATION') ||
+                      line.startsWith('DISPLAY') ||
+                      line.startsWith('UTILITY') ||
+                      line.startsWith('LITERALS') ||
                       line.startsWith('EXAMPLES') ||
                       line.startsWith('OPERATORS')) {
                     return Padding(
@@ -504,26 +506,22 @@ class _CustomAnalysisWidgetState extends State<CustomAnalysisWidget> {
             ),
             titlesData: FlTitlesData(
               show: true,
-              rightTitles:
-                  const AxisTitles(sideTitles: SideTitles(showTitles: false)),
-              topTitles:
-                  const AxisTitles(sideTitles: SideTitles(showTitles: false)),
+              rightTitles: const AxisTitles(sideTitles: SideTitles(showTitles: false)),
+              topTitles: const AxisTitles(sideTitles: SideTitles(showTitles: false)),
               bottomTitles: AxisTitles(
                 sideTitles: SideTitles(
                   showTitles: true,
                   reservedSize: 28,
                   getTitlesWidget: (double value, TitleMeta meta) {
-                    if (value.toInt() >= 0 && value.toInt() < data.length) {
-                      final label = data[value.toInt()]
-                              [data[value.toInt()].keys.first]
-                          .toString();
+                    final index = value.toInt();
+                    if (index >= 0 && index < data.length) {
+                      // KORREKTUR: Greift auf den 'label'-Schlüssel zu.
+                      final label = data[index]['label']?.toString() ?? '';
                       return SideTitleWidget(
                         axisSide: meta.axisSide,
                         space: 4,
                         child: Text(
-                          label.length > 8
-                              ? '${label.substring(0, 8)}...'
-                              : label,
+                          label.length > 8 ? '${label.substring(0, 8)}...' : label,
                           style: const TextStyle(fontSize: 10),
                         ),
                       );
@@ -537,8 +535,7 @@ class _CustomAnalysisWidgetState extends State<CustomAnalysisWidget> {
                   showTitles: true,
                   reservedSize: 28,
                   getTitlesWidget: (double value, TitleMeta meta) {
-                    return Text(value.toInt().toString(),
-                        style: const TextStyle(fontSize: 12));
+                    return Text(value.toInt().toString(), style: const TextStyle(fontSize: 12));
                   },
                 ),
               ),
@@ -547,13 +544,24 @@ class _CustomAnalysisWidgetState extends State<CustomAnalysisWidget> {
             barGroups: data.asMap().entries.map((entry) {
               final index = entry.key;
               final item = entry.value;
-              final value = (item['average'] as num? ?? 0.0).toDouble();
+
+              // KORREKTUR: Greift explizit auf den 'value'-Schlüssel zu.
+              final rawValue = item['value'];
+              num? numericValue;
+
+              if (rawValue is num) {
+                numericValue = rawValue;
+              } else if (rawValue is String) {
+                numericValue = num.tryParse(rawValue);
+              }
+
+              final barValue = (numericValue ?? 0.0).toDouble();
 
               return BarChartGroupData(
                 x: index,
                 barRods: [
                   BarChartRodData(
-                    toY: value,
+                    toY: barValue,
                     color: Colors.blue,
                     width: 22,
                     borderRadius: const BorderRadius.only(

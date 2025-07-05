@@ -286,6 +286,12 @@ class ProgrammableAnalysisEngine {
         return _functionShowBars(args);
       case 'show_list':
         return _functionShowList(args);
+      case 'show_line':
+        return _functionShowLine(args);
+      case 'show_pie':
+        return _functionShowPie(args);
+      case 'show_subjects':
+        return _functionShowSubjects(args);
 
       case 'debug':
       case 'info':
@@ -294,6 +300,98 @@ class ProgrammableAnalysisEngine {
       default:
         throw Exception('Unknown function: $functionName');
     }
+  }
+
+
+  dynamic _functionShowLine(List<dynamic> args) {
+    if (args.isEmpty) throw Exception('show_line() requires data');
+
+    if (args[0] is GradeData) {
+      final gradeData = args[0] as GradeData;
+      final chartData = <Map<String, dynamic>>[];
+
+      // Sort grades by date
+      final sortedGrades = List<Grade>.from(gradeData.grades)
+        ..sort((a, b) => a.date.compareTo(b.date));
+
+      for (int i = 0; i < sortedGrades.length; i++) {
+        final grade = sortedGrades[i];
+
+        // Calculate running average
+        final gradesUpToNow = sortedGrades.take(i + 1).toList();
+        final totalWeighted = gradesUpToNow.fold(0.0, (sum, g) => sum + (g.value * g.weight));
+        final totalWeight = gradesUpToNow.fold(0.0, (sum, g) => sum + g.weight);
+        final average = totalWeight > 0 ? totalWeighted / totalWeight : 0.0;
+
+        chartData.add({
+          'date': grade.date.toIso8601String().substring(0, 10), // YYYY-MM-DD format
+          'grade': grade.value,
+          'average': average,
+        });
+      }
+
+      return {'type': 'chart_data', 'chartType': 'line', 'data': chartData};
+    }
+
+    throw Exception('show_line() currently only supports GradeData');
+  }
+
+  dynamic _functionShowPie(List<dynamic> args) {
+    if (args.isEmpty) throw Exception('show_pie() requires data');
+
+    if (args[0] is GradeData) {
+      final gradeData = args[0] as GradeData;
+      final chartData = <Map<String, dynamic>>[];
+
+      final ranges = [
+        {'min': 13, 'max': 15, 'range': '13-15', 'description': 'Sehr gut'},
+        {'min': 10, 'max': 12, 'range': '10-12', 'description': 'Gut'},
+        {'min': 7, 'max': 9, 'range': '7-9', 'description': 'Befriedigend'},
+        {'min': 4, 'max': 6, 'range': '4-6', 'description': 'Ausreichend'},
+        {'min': 0, 'max': 3, 'range': '0-3', 'description': 'Mangelhaft'},
+      ];
+
+      for (final range in ranges) {
+        final count = gradeData.grades.where((grade) =>
+        grade.value >= (range['min']! as num) && grade.value <= (range['max']! as num)
+        ).length;
+
+        if (count > 0) {
+          chartData.add({
+            'count': count,
+            'range': range['range'],
+            'description': range['description'],
+          });
+        }
+      }
+
+      return {'type': 'chart_data', 'chartType': 'pie', 'data': chartData};
+    }
+
+    throw Exception('show_pie() currently only supports GradeData');
+  }
+
+// For subject comparison (bar chart showing average per subject)
+  dynamic _functionShowSubjects(List<dynamic> args) {
+    if (args.isEmpty) throw Exception('show_subjects() requires data');
+
+    if (args[0] is SubjectData) {
+      final subjectData = args[0] as SubjectData;
+      final chartData = <Map<String, dynamic>>[];
+
+      for (final subject in subjectData.subjects) {
+        if (subject.grades.isNotEmpty) {  // Only show subjects with grades
+          chartData.add({
+            'label': subject.name,
+            'value': subject.averageGrade,
+          });
+        }
+      }
+
+      return {'type': 'chart_data', 'chartType': 'bar', 'data': chartData};
+    }
+
+    throw Exception('show_subjects() currently only supports SubjectData');
   }
 
   dynamic _functionSubject(List<dynamic> args) {
@@ -572,7 +670,7 @@ class ProgrammableAnalysisEngine {
     return null;
   }
 
-  static List<String> get programmingHelpText => [
+  static List<String> get programmingHelpText => [ //TODO: a help function for each function
         'PROGRAMMABLE ANALYSIS LANGUAGE (v2)',
         'This engine evaluates expressions with standard math order of operations.',
         '',
@@ -601,6 +699,9 @@ class ProgrammableAnalysisEngine {
         '  show_num(number)      - Displays a single number. e.g. show_num(average(all_grades()))',
         '  show_number(number)   - Alias for show_num(number).',
         '  show_bars(list_data)  - Displays data as a bar chart. e.g. show_bars([10, 20, 15])',
+        '  show_line(grade_data) - Shows grade progression over time as line chart. e.g. show_line(grades(subject("Math")))',
+        '  show_pie(grade_data)  - Shows grade distribution as pie chart. e.g. show_pie(all_grades())',
+        '  show_subjects(subj_data) - Shows subject averages as bar chart. e.g. show_subjects(all_subjects())',
         '  show_list(data)       - Displays data as a formatted list (GradeData, SubjectData, ListData).',
         '',
         'UTILITY FUNCTIONS:',
@@ -623,6 +724,8 @@ class ProgrammableAnalysisEngine {
         '  max([10, count(all_grades()), 15])',
         '  show_list(sort(all_grades()))',
         '  show_bars(sort(grades(subject("Physics"))))',
+        '  show_line(grades(subject("Mathematik")))',
+        '  show_line(all_grades())',
         '  show_num(count(take(all_subjects(), 3)))',
       ];
 }
