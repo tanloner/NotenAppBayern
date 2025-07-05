@@ -28,6 +28,8 @@ class Subject {
   double weightSmall = grades.fold(0.0, (sum, grade) => grade.isBig ? sum : sum + grade.weight);
   double sumBig = grades.fold(0.0, (sum, grade) => grade.isBig ? sum + grade.value * grade.weight : sum); //TODO: oder hier fehler werfen falls mehr als 1 großer leistungsnachweis eingetragen ist?
   double weightBig = grades.fold(0.0, (sum, grade) => grade.isBig ? sum + grade.weight : sum);
+  if (weightSmall == 0) return sumBig / weightBig;
+  if (weightBig == 0) return sumSmall / weightSmall;
   double smallGrade = sumSmall / weightSmall;
   double bigGrade = sumBig / weightBig;
   return (smallGrade + bigGrade) / 2;

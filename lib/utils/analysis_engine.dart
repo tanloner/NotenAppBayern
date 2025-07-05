@@ -382,7 +382,7 @@ class ProgrammableAnalysisEngine {
 
     if (data is GradeData) {
       if (data.grades.isEmpty) return NumberData(0.0);
-      return NumberData(data.grades.map((g) => g.value).reduce(min) as double);
+      return NumberData(data.grades.map((g) => g.value).reduce(min).toDouble());
     }
     if (data is ListData) {
       if (data.items.isEmpty) return NumberData(0.0);
@@ -397,7 +397,7 @@ class ProgrammableAnalysisEngine {
 
     if (data is GradeData) {
       if (data.grades.isEmpty) return NumberData(0.0);
-      return NumberData(data.grades.map((g) => g.value).reduce(max) as double);
+      return NumberData(data.grades.map((g) => g.value).reduce(max).toDouble());
     }
     if (data is ListData) {
       if (data.items.isEmpty) return NumberData(0.0);
@@ -413,7 +413,7 @@ class ProgrammableAnalysisEngine {
     final data = args[0];
     if (data is GradeData) {
       if (data.grades.isEmpty) return NumberData(0.0);
-      values = data.grades.map((g) => g.value).cast<double>().toList();
+      values = data.grades.map((g) => g.value.toDouble()).toList();
     } else if (data is ListData) {
       if (data.items.isEmpty) return NumberData(0.0);
       values = data.items.map((i) => _getNumber(i)).toList();
