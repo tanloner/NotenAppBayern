@@ -1,6 +1,6 @@
 import 'dart:convert';
 
-import 'package:flutter/material.dart';
+import 'package:flutter/foundation.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../models/grade.dart';
@@ -12,7 +12,7 @@ class AppState extends ChangeNotifier {
   List<CalendarEvent> _calendarEvents = [];
   double _targetGrade = 15.0;
   bool _isDarkMode = false;
-  String _currentSemester = '1. Halbjahr 2024/25';
+  String _currentSemester = '1. Halbjahr 2024/25'; //TODO: init depending on current date
   bool _isFirstLaunch = true;
 
   List<Subject> get subjects => _subjects;
@@ -47,7 +47,7 @@ class AppState extends ChangeNotifier {
     _subjects.fold(0.0, (sum, subject) => sum + subject.averageGrade);
 
     int lengthWithout0 =
-        _subjects.where((subject) => subject.averageGrade != 0).length;
+        _subjects.where((subject) => subject.amountGrades != 0).length;
     return lengthWithout0 > 0 ? sum / lengthWithout0 : 0.0;
   }
 
@@ -166,7 +166,9 @@ class AppState extends ChangeNotifier {
       _targetGrade = target;
       notifyListeners();
     } catch (e) {
-      print('Fehler beim Laden der Daten: $e');
+      if (kDebugMode) {
+        print('Fehler beim Laden der Daten: $e');
+      }
     }
   }
 
@@ -185,7 +187,9 @@ class AppState extends ChangeNotifier {
       await prefs.setBool('isDarkMode', _isDarkMode);
       await prefs.setString('currentSemester', _currentSemester);
     } catch (e) {
-      print('Fehler beim Speichern der Daten: $e');
+      if (kDebugMode) {
+        print('Fehler beim Speichern der Daten: $e');
+      }
     }
   }
 

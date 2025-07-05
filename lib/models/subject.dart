@@ -17,11 +17,28 @@ class Subject {
       this.isLk = false});
 
   double get averageGrade {
-    if (grades.isEmpty) return 0.0;
+/*    if (grades.isEmpty) return 0.0;
     double sum =
         grades.fold(0.0, (sum, grade) => sum + grade.value * grade.weight);
     double weightSum = grades.fold(0.0, (sum, grade) => sum + grade.weight);
-    return sum / weightSum;
+    return sum / weightSum;*/
+
+  if (grades.isEmpty) return 0.0;
+  double sumSmall = grades.fold(0.0, (sum, grade) => grade.isBig ? sum : sum + grade.value * grade.weight);
+  double weightSmall = grades.fold(0.0, (sum, grade) => grade.isBig ? sum : sum + grade.weight);
+  double sumBig = grades.fold(0.0, (sum, grade) => grade.isBig ? sum + grade.value * grade.weight : sum); //TODO: oder hier fehler werfen falls mehr als 1 großer leistungsnachweis eingetragen ist?
+  double weightBig = grades.fold(0.0, (sum, grade) => grade.isBig ? sum + grade.weight : sum);
+  double smallGrade = sumSmall / weightSmall;
+  double bigGrade = sumBig / weightBig;
+  return (smallGrade + bigGrade) / 2;
+  }
+
+  bool get hasBigGrade {
+    return grades.any((grade) => grade.type == GradeType.big);
+  }
+
+  int get amountGrades {
+    return grades.length;
   }
 
   void setNewName(String newName) {

@@ -2,7 +2,6 @@ import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 
 import '../providers/app_state.dart';
-import '../utils/analysis_engine.dart';
 
 class StatisticsCharts extends StatelessWidget {
   final AppState appState;
@@ -11,8 +10,6 @@ class StatisticsCharts extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final engine = ProgrammableAnalysisEngine(
-        subjects: appState.subjects, events: appState.calendarEvents);
 
     return SingleChildScrollView(
       padding: const EdgeInsets.all(16),

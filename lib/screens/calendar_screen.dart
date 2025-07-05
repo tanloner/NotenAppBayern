@@ -62,7 +62,7 @@ class _CalendarScreenState extends State<CalendarScreen> {
                   },
                 ),
               ),
-              if (_selectedDate != null) _buildEventsList(appState),
+              _buildEventsList(appState),
             ],
           );
         },

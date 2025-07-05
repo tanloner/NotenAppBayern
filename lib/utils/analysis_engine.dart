@@ -127,11 +127,11 @@ class ProgrammableAnalysisEngine {
       if (char == '"' && (i == 0 || expr[i - 1] != '\\')) {
         inQuotes = !inQuotes;
       } else if (!inQuotes) {
-        if (char == ')')
+        if (char == ')') {
           parenDepth++;
-        else if (char == '(')
+        } else if (char == '(') {
           parenDepth--;
-        else if (parenDepth == 0 && operators.contains(char)) {
+        }else if (parenDepth == 0 && operators.contains(char)) {
           return i;
         }
       }
@@ -198,15 +198,15 @@ class ProgrammableAnalysisEngine {
       if (char == '"' && (i == 0 || argsString[i - 1] != '\\')) {
         inQuotes = !inQuotes;
       } else if (!inQuotes) {
-        if (char == '(')
+        if (char == '(') {
           parenDepth++;
-        else if (char == ')')
+        } else if (char == ')') {
           parenDepth--;
-        else if (char == '[')
+        }else if (char == '[') {
           bracketDepth++;
-        else if (char == ']')
+        }else if (char == ']') {
           bracketDepth--;
-        else if ((char == ';' || char == ',') &&
+        }else if ((char == ';' || char == ',') &&
             parenDepth == 0 &&
             bracketDepth == 0) {
           parts.add(buffer.toString().trim());
@@ -312,7 +312,7 @@ class ProgrammableAnalysisEngine {
   dynamic _functionAllSubjects(List<dynamic> args) => SubjectData(subjects);
 
   dynamic _functionGrades(List<dynamic> args) {
-    if (args.isEmpty || !(args[0] is SubjectData)) {
+    if (args.isEmpty || args[0] is! SubjectData) {
       throw Exception(
           'grades() requires a SubjectData argument. Try grades(subject("Name")).');
     }
@@ -382,7 +382,7 @@ class ProgrammableAnalysisEngine {
 
     if (data is GradeData) {
       if (data.grades.isEmpty) return NumberData(0.0);
-      return NumberData(data.grades.map((g) => g.value).reduce(min));
+      return NumberData(data.grades.map((g) => g.value).reduce(min) as double);
     }
     if (data is ListData) {
       if (data.items.isEmpty) return NumberData(0.0);
@@ -397,7 +397,7 @@ class ProgrammableAnalysisEngine {
 
     if (data is GradeData) {
       if (data.grades.isEmpty) return NumberData(0.0);
-      return NumberData(data.grades.map((g) => g.value).reduce(max));
+      return NumberData(data.grades.map((g) => g.value).reduce(max) as double);
     }
     if (data is ListData) {
       if (data.items.isEmpty) return NumberData(0.0);
@@ -413,7 +413,7 @@ class ProgrammableAnalysisEngine {
     final data = args[0];
     if (data is GradeData) {
       if (data.grades.isEmpty) return NumberData(0.0);
-      values = data.grades.map((g) => g.value).toList();
+      values = data.grades.map((g) => g.value).cast<double>().toList();
     } else if (data is ListData) {
       if (data.items.isEmpty) return NumberData(0.0);
       values = data.items.map((i) => _getNumber(i)).toList();
@@ -432,8 +432,9 @@ class ProgrammableAnalysisEngine {
   }
 
   dynamic _functionConcat(List<dynamic> args) {
-    if (args.length < 2)
+    if (args.length < 2) {
       throw Exception('concat() requires at least 2 arguments');
+    }
     if (args.every((arg) => arg is GradeData)) {
       final allGrades =
           args.expand((arg) => (arg as GradeData).grades).toList();

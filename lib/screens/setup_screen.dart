@@ -51,7 +51,7 @@ class _SetupScreenState extends State<SetupScreen> {
   @override
   void initState() {
     super.initState();
-    _setupSubjects = Config.all_subjects.map((name) {
+    _setupSubjects = Config.allSubjects.map((name) {
       bool isSelected = (name == 'Mathematik' || name == 'Deutsch');
       bool isLk = (name == 'Mathematik' || name == 'Deutsch');
       Color color = Colors.grey.shade400;

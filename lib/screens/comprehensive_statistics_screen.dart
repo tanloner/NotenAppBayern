@@ -152,7 +152,7 @@ class _ComprehensiveStatisticsScreenState
                         Expanded(
                           child: Column(
                             children: [
-                              Icon(Icons.emoji_events,
+                              const Icon(Icons.emoji_events,
                                   color: Colors.amber, size: 32),
                               const SizedBox(height: 8),
                               Text('Bestes Fach',
@@ -169,7 +169,7 @@ class _ComprehensiveStatisticsScreenState
                         Expanded(
                           child: Column(
                             children: [
-                              Icon(Icons.trending_down,
+                              const Icon(Icons.trending_down,
                                   color: Colors.red, size: 32),
                               const SizedBox(height: 8),
                               Text('Verbesserungspotential',
@@ -249,8 +249,6 @@ class _ComprehensiveStatisticsScreenState
   }
 
   Widget _buildTrendsTab(AppState appState) {
-    final engine = ProgrammableAnalysisEngine(
-        subjects: appState.subjects, events: appState.calendarEvents);
 
     return SingleChildScrollView(
       padding: const EdgeInsets.all(16),
