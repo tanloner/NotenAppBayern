@@ -18,12 +18,12 @@ class _CustomAnalysisWidgetState extends State<CustomAnalysisWidget> {
   final List<AnalysisResult> _results = [];
   final List<String> _history = [];
   bool _showHelp = false;
-  late AnalysisEngine _engine;
+  late ProgrammableAnalysisEngine _engine;
 
   @override
   void initState() {
     super.initState();
-    _engine = AnalysisEngine(
+    _engine = ProgrammableAnalysisEngine(
         subjects: widget.appState.subjects,
         events: widget.appState.calendarEvents);
   }
@@ -92,18 +92,29 @@ class _CustomAnalysisWidgetState extends State<CustomAnalysisWidget> {
                 ],
               ),
               const SizedBox(height: 12),
-              Wrap(
-                spacing: 8,
-                children:
-                    AnalysisEngine.exampleExpressions.take(6).map((example) {
-                  return ActionChip(
-                    label: Text(example, style: const TextStyle(fontSize: 12)),
-                    onPressed: () {
-                      _expressionController.text = example;
-                      _executeExpression();
-                    },
-                  );
-                }).toList(),
+              SingleChildScrollView(
+                scrollDirection: Axis.horizontal,
+                child: Row(
+                  children: [
+                    'count(all_grades())',
+                    'debug()',
+                    'show_num(5.0)',
+                    '3.0 + 2.0',
+                    '10.0 / 2.0',
+                  ].map((example) {
+                    return Padding(
+                      padding: const EdgeInsets.only(right: 8),
+                      child: ActionChip(
+                        label:
+                            Text(example, style: const TextStyle(fontSize: 11)),
+                        onPressed: () {
+                          _expressionController.text = example;
+                          _executeExpression();
+                        },
+                      ),
+                    );
+                  }).toList(),
+                ),
               ),
             ],
           ),
@@ -122,6 +133,35 @@ class _CustomAnalysisWidgetState extends State<CustomAnalysisWidget> {
                 ),
         ),
       ],
+    );
+  }
+
+  Widget _buildDebugInfo(Map debugData) {
+    final info = debugData['info'] as List<String>;
+    return Container(
+      padding: const EdgeInsets.all(12),
+      decoration: BoxDecoration(
+        color: Colors.blue.withOpacity(0.1),
+        borderRadius: BorderRadius.circular(8),
+        border: Border.all(color: Colors.blue.withOpacity(0.3)),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const Row(
+            children: [
+              Icon(Icons.info, color: Colors.blue),
+              SizedBox(width: 8),
+              Text('Debug Info', style: TextStyle(fontWeight: FontWeight.bold)),
+            ],
+          ),
+          const SizedBox(height: 8),
+          ...info.map((line) => Padding(
+                padding: const EdgeInsets.only(bottom: 4),
+                child: Text(line, style: const TextStyle(fontSize: 12)),
+              )),
+        ],
+      ),
     );
   }
 
@@ -151,10 +191,16 @@ class _CustomAnalysisWidgetState extends State<CustomAnalysisWidget> {
             child: SingleChildScrollView(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
-                children: AnalysisEngine.helpText.map((line) {
+                children:
+                    ProgrammableAnalysisEngine.programmingHelpText.map((line) {
                   if (line.isEmpty) return const SizedBox(height: 8);
-                  if (line.startsWith('Verfügbare') ||
-                      line.startsWith('Einfache')) {
+                  if (line.startsWith('PROGRAMMABLE') ||
+                      line.startsWith('DATA') ||
+                      line.startsWith('MATH') ||
+                      line.startsWith('LIST') ||
+                      line.startsWith('VISUALIZATION') ||
+                      line.startsWith('EXAMPLES') ||
+                      line.startsWith('OPERATORS')) {
                     return Padding(
                       padding: const EdgeInsets.only(top: 8, bottom: 4),
                       child: Text(line,
@@ -164,7 +210,8 @@ class _CustomAnalysisWidgetState extends State<CustomAnalysisWidget> {
                   return Padding(
                     padding: const EdgeInsets.only(left: 16, bottom: 2),
                     child: Text(line,
-                        style: const TextStyle(fontFamily: 'monospace')),
+                        style: const TextStyle(
+                            fontFamily: 'monospace', fontSize: 12)),
                   );
                 }).toList(),
               ),
@@ -177,30 +224,35 @@ class _CustomAnalysisWidgetState extends State<CustomAnalysisWidget> {
 
   Widget _buildEmptyState() {
     return Center(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          const Icon(Icons.analytics_outlined, size: 64, color: Colors.grey),
-          const SizedBox(height: 16),
-          const Text(
-            'Führe deine erste Analyse aus!',
-            style: TextStyle(fontSize: 18, color: Colors.grey),
-          ),
-          const SizedBox(height: 8),
-          const Text(
-            'Probiere: average(all) oder count(subjects)',
-            style: TextStyle(fontSize: 14, color: Colors.grey),
-          ),
-          const SizedBox(height: 24),
-          ElevatedButton.icon(
-            onPressed: () {
-              _expressionController.text = 'average(all)';
-              _executeExpression();
-            },
-            icon: const Icon(Icons.play_arrow),
-            label: const Text('Beispiel ausführen'),
-          ),
-        ],
+      child: Padding(
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            const Icon(Icons.analytics_outlined, size: 64, color: Colors.grey),
+            const SizedBox(height: 16),
+            const Text(
+              'Führe deine erste Analyse aus!',
+              style: TextStyle(fontSize: 18, color: Colors.grey),
+              textAlign: TextAlign.center,
+            ),
+            const SizedBox(height: 8),
+            const Text(
+              'Probiere: count(all_grades()) oder debug()',
+              style: TextStyle(fontSize: 14, color: Colors.grey),
+              textAlign: TextAlign.center,
+            ),
+            const SizedBox(height: 24),
+            ElevatedButton.icon(
+              onPressed: () {
+                _expressionController.text = 'debug()';
+                _executeExpression();
+              },
+              icon: const Icon(Icons.play_arrow),
+              label: const Text('Debug ausführen'),
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -214,6 +266,7 @@ class _CustomAnalysisWidgetState extends State<CustomAnalysisWidget> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Expanded(
                   child: Text(
@@ -222,15 +275,21 @@ class _CustomAnalysisWidgetState extends State<CustomAnalysisWidget> {
                         fontSize: 16, fontWeight: FontWeight.bold),
                   ),
                 ),
+                const SizedBox(width: 8),
                 if (_history.length > index)
-                  Chip(
-                    label: Text(
-                      _history[_history.length - 1 - index],
-                      style: const TextStyle(fontSize: 10),
+                  Flexible(
+                    child: Chip(
+                      label: Text(
+                        _history[_history.length - 1 - index],
+                        style: const TextStyle(fontSize: 10),
+                        softWrap: true,
+                      ),
+                      backgroundColor: Colors.grey[200],
                     ),
-                    backgroundColor: Colors.grey[200],
                   ),
                 IconButton(
+                  padding: EdgeInsets.zero,
+                  constraints: const BoxConstraints(),
                   icon: const Icon(Icons.close, size: 20),
                   onPressed: () => setState(
                       () => _results.removeAt(_results.length - 1 - index)),
@@ -286,7 +345,13 @@ class _CustomAnalysisWidgetState extends State<CustomAnalysisWidget> {
             else if (result.type == 'chart_data' && result.chartData != null)
               _buildResultChart(result)
             else if (result.type == 'list')
-              _buildResultList(result),
+              _buildResultList(result)
+            else if (result.value is Map &&
+                (result.value as Map)['type'] == 'debug_info')
+              _buildDebugInfo(result.value as Map)
+            else
+              Text(result.value.toString(),
+                  style: const TextStyle(fontSize: 16)),
           ],
         ),
       ),
@@ -307,9 +372,11 @@ class _CustomAnalysisWidgetState extends State<CustomAnalysisWidget> {
 
       for (int i = 0; i < data.length; i++) {
         final grade = (data[i]['grade'] as num).toDouble();
-        final average = (data[i]['average'] as num).toDouble();
+        final average = (data[i]['average'] as num?)?.toDouble();
         gradeSpots.add(FlSpot(i.toDouble(), grade));
-        averageSpots.add(FlSpot(i.toDouble(), average));
+        if (average != null) {
+          averageSpots.add(FlSpot(i.toDouble(), average));
+        }
       }
 
       return Container(
@@ -327,15 +394,19 @@ class _CustomAnalysisWidgetState extends State<CustomAnalysisWidget> {
               bottomTitles: AxisTitles(
                 sideTitles: SideTitles(
                   showTitles: true,
-                  reservedSize: 30,
+                  reservedSize: 35,
+                  interval: (data.length / 5).ceil().toDouble(),
                   getTitlesWidget: (double value, TitleMeta meta) {
-                    if (value.toInt() >= 0 && value.toInt() < data.length) {
+                    final index = value.toInt();
+                    if (index >= 0 && index < data.length) {
+                      String label = data[index]['date'].toString();
+                      if (label.length > 8) {
+                        label = '${label.substring(0, 6)}...';
+                      }
                       return SideTitleWidget(
                         axisSide: meta.axisSide,
-                        child: Text(
-                          data[value.toInt()]['date'].toString(),
-                          style: const TextStyle(fontSize: 10),
-                        ),
+                        child:
+                            Text(label, style: const TextStyle(fontSize: 10)),
                       );
                     }
                     return Container();
@@ -366,7 +437,7 @@ class _CustomAnalysisWidgetState extends State<CustomAnalysisWidget> {
                 barWidth: 3,
                 dotData: const FlDotData(show: true),
               ),
-              if (firstItem.containsKey('average'))
+              if (averageSpots.isNotEmpty)
                 LineChartBarData(
                   spots: averageSpots,
                   isCurved: true,
@@ -440,6 +511,7 @@ class _CustomAnalysisWidgetState extends State<CustomAnalysisWidget> {
               bottomTitles: AxisTitles(
                 sideTitles: SideTitles(
                   showTitles: true,
+                  reservedSize: 28,
                   getTitlesWidget: (double value, TitleMeta meta) {
                     if (value.toInt() >= 0 && value.toInt() < data.length) {
                       final label = data[value.toInt()]
@@ -447,6 +519,7 @@ class _CustomAnalysisWidgetState extends State<CustomAnalysisWidget> {
                           .toString();
                       return SideTitleWidget(
                         axisSide: meta.axisSide,
+                        space: 4,
                         child: Text(
                           label.length > 8
                               ? '${label.substring(0, 8)}...'
@@ -517,7 +590,7 @@ class _CustomAnalysisWidgetState extends State<CustomAnalysisWidget> {
     final expression = _expressionController.text.trim();
     if (expression.isEmpty) return;
 
-    _engine = AnalysisEngine(
+    _engine = ProgrammableAnalysisEngine(
         subjects: widget.appState.subjects,
         events: widget.appState.calendarEvents);
 

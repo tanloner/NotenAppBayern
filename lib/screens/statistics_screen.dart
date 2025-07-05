@@ -32,7 +32,6 @@ class StatisticsScreen extends StatelessWidget {
                   ),
                 ),
                 const SizedBox(height: 12),
-
                 ...appState.subjects.map(
                   (subject) => _buildSubjectStatCard(context, subject),
                 ),

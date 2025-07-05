@@ -11,11 +11,12 @@ class ComprehensiveStatisticsScreen extends StatefulWidget {
   const ComprehensiveStatisticsScreen({super.key});
 
   @override
-  State<ComprehensiveStatisticsScreen> createState() => _ComprehensiveStatisticsScreenState();
+  State<ComprehensiveStatisticsScreen> createState() =>
+      _ComprehensiveStatisticsScreenState();
 }
 
-class _ComprehensiveStatisticsScreenState extends State<ComprehensiveStatisticsScreen>
-    with TickerProviderStateMixin {
+class _ComprehensiveStatisticsScreenState
+    extends State<ComprehensiveStatisticsScreen> with TickerProviderStateMixin {
   late TabController _tabController;
 
   @override
@@ -91,15 +92,18 @@ class _ComprehensiveStatisticsScreenState extends State<ComprehensiveStatisticsS
     final overallAverage = appState.overallAverage;
 
     final bestSubject = appState.subjects.isNotEmpty
-        ? appState.subjects.reduce((a, b) => a.averageGrade > b.averageGrade ? a : b)
+        ? appState.subjects
+            .reduce((a, b) => a.averageGrade > b.averageGrade ? a : b)
         : null;
 
     final worstSubject = appState.subjects.isNotEmpty
-        ? appState.subjects.reduce((a, b) => a.averageGrade < b.averageGrade ? a : b)
+        ? appState.subjects
+            .reduce((a, b) => a.averageGrade < b.averageGrade ? a : b)
         : null;
 
-    final recentGrades = allGrades.where((g) =>
-    DateTime.now().difference(g.date).inDays <= 30).toList();
+    final recentGrades = allGrades
+        .where((g) => DateTime.now().difference(g.date).inDays <= 30)
+        .toList();
 
     final heaviestWeight = allGrades.isNotEmpty
         ? allGrades.map((g) => g.weight).reduce((a, b) => a > b ? a : b)
@@ -112,18 +116,26 @@ class _ComprehensiveStatisticsScreenState extends State<ComprehensiveStatisticsS
         children: [
           Row(
             children: [
-              Expanded(child: _buildStatCard('Gesamtdurchschnitt',
-                  overallAverage.toStringAsFixed(2), Icons.trending_up, Colors.blue)),
+              Expanded(
+                  child: _buildStatCard(
+                      'Gesamtdurchschnitt',
+                      overallAverage.toStringAsFixed(2),
+                      Icons.trending_up,
+                      Colors.blue)),
               const SizedBox(width: 12),
-              Expanded(child: _buildStatCard('Fächer',
-                  appState.subjects.length.toString(), Icons.book, Colors.green)),
+              Expanded(
+                  child: _buildStatCard(
+                      'Fächer',
+                      appState.subjects.length.toString(),
+                      Icons.book,
+                      Colors.green)),
               const SizedBox(width: 12),
-              Expanded(child: _buildStatCard('Noten',
-                  totalGrades.toString(), Icons.assignment, Colors.orange)),
+              Expanded(
+                  child: _buildStatCard('Noten', totalGrades.toString(),
+                      Icons.assignment, Colors.orange)),
             ],
           ),
           const SizedBox(height: 16),
-
           if (bestSubject != null && worstSubject != null) ...[
             Card(
               child: Padding(
@@ -132,31 +144,42 @@ class _ComprehensiveStatisticsScreenState extends State<ComprehensiveStatisticsS
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     const Text('Fach-Performance',
-                        style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+                        style: TextStyle(
+                            fontSize: 18, fontWeight: FontWeight.bold)),
                     const SizedBox(height: 12),
                     Row(
                       children: [
                         Expanded(
                           child: Column(
                             children: [
-                              Icon(Icons.emoji_events, color: Colors.amber, size: 32),
+                              Icon(Icons.emoji_events,
+                                  color: Colors.amber, size: 32),
                               const SizedBox(height: 8),
-                              Text('Bestes Fach', style: TextStyle(color: Colors.grey[600])),
-                              Text(bestSubject.name, style: const TextStyle(fontWeight: FontWeight.bold)),
+                              Text('Bestes Fach',
+                                  style: TextStyle(color: Colors.grey[600])),
+                              Text(bestSubject.name,
+                                  style: const TextStyle(
+                                      fontWeight: FontWeight.bold)),
                               Text(bestSubject.averageGrade.toStringAsFixed(2),
-                                  style: const TextStyle(fontSize: 20, color: Colors.green)),
+                                  style: const TextStyle(
+                                      fontSize: 20, color: Colors.green)),
                             ],
                           ),
                         ),
                         Expanded(
                           child: Column(
                             children: [
-                              Icon(Icons.trending_down, color: Colors.red, size: 32),
+                              Icon(Icons.trending_down,
+                                  color: Colors.red, size: 32),
                               const SizedBox(height: 8),
-                              Text('Verbesserungspotential', style: TextStyle(color: Colors.grey[600])),
-                              Text(worstSubject.name, style: const TextStyle(fontWeight: FontWeight.bold)),
+                              Text('Verbesserungspotential',
+                                  style: TextStyle(color: Colors.grey[600])),
+                              Text(worstSubject.name,
+                                  style: const TextStyle(
+                                      fontWeight: FontWeight.bold)),
                               Text(worstSubject.averageGrade.toStringAsFixed(2),
-                                  style: const TextStyle(fontSize: 20, color: Colors.red)),
+                                  style: const TextStyle(
+                                      fontSize: 20, color: Colors.red)),
                             ],
                           ),
                         ),
@@ -168,7 +191,6 @@ class _ComprehensiveStatisticsScreenState extends State<ComprehensiveStatisticsS
             ),
             const SizedBox(height: 16),
           ],
-
           Card(
             child: Padding(
               padding: const EdgeInsets.all(16),
@@ -176,15 +198,24 @@ class _ComprehensiveStatisticsScreenState extends State<ComprehensiveStatisticsS
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   const Text('Letzte 30 Tage',
-                      style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+                      style:
+                          TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
                   const SizedBox(height: 12),
                   Row(
                     children: [
-                      Expanded(child: _buildStatCard('Neue Noten',
-                          recentGrades.length.toString(), Icons.fiber_new, Colors.purple)),
+                      Expanded(
+                          child: _buildStatCard(
+                              'Neue Noten',
+                              recentGrades.length.toString(),
+                              Icons.fiber_new,
+                              Colors.purple)),
                       const SizedBox(width: 12),
-                      Expanded(child: _buildStatCard('Höchste Gewichtung',
-                          '${heaviestWeight}x', Icons.fitness_center, Colors.indigo)),
+                      Expanded(
+                          child: _buildStatCard(
+                              'Höchste Gewichtung',
+                              '${heaviestWeight}x',
+                              Icons.fitness_center,
+                              Colors.indigo)),
                     ],
                   ),
                 ],
@@ -192,7 +223,6 @@ class _ComprehensiveStatisticsScreenState extends State<ComprehensiveStatisticsS
             ),
           ),
           const SizedBox(height: 16),
-
           Card(
             child: Padding(
               padding: const EdgeInsets.all(16),
@@ -200,9 +230,11 @@ class _ComprehensiveStatisticsScreenState extends State<ComprehensiveStatisticsS
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   const Text('Fächer im Detail',
-                      style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+                      style:
+                          TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
                   const SizedBox(height: 12),
-                  ...appState.subjects.map((subject) => _buildSubjectDetailRow(subject)),
+                  ...appState.subjects
+                      .map((subject) => _buildSubjectDetailRow(subject)),
                 ],
               ),
             ),
@@ -215,13 +247,10 @@ class _ComprehensiveStatisticsScreenState extends State<ComprehensiveStatisticsS
   Widget _buildChartsTab(AppState appState) {
     return StatisticsCharts(appState: appState);
   }
-  /*Widget _buildChartsTab(AppState appState) {
-    return const Center(
-      child: Text('Charts kommen bald!', style: TextStyle(fontSize: 18)),
-    );
-  }*/
+
   Widget _buildTrendsTab(AppState appState) {
-    final engine = AnalysisEngine(subjects: appState.subjects, events: appState.calendarEvents);
+    final engine = ProgrammableAnalysisEngine(
+        subjects: appState.subjects, events: appState.calendarEvents);
 
     return SingleChildScrollView(
       padding: const EdgeInsets.all(16),
@@ -231,23 +260,26 @@ class _ComprehensiveStatisticsScreenState extends State<ComprehensiveStatisticsS
           const Text('Trend-Analysen',
               style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
           const SizedBox(height: 16),
-
           Card(
             child: Padding(
               padding: const EdgeInsets.all(16),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const Text('Gesamtentwicklung',
-                      style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+                  const Text('Schnelle Analyse',
+                      style:
+                          TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
                   const SizedBox(height: 8),
-                  _buildTrendResult(engine.executeExpression('trend(all)')),
+                  Text(
+                      'Gesamtdurchschnitt: ${appState.overallAverage.toStringAsFixed(2)}'),
+                  Text('Anzahl Fächer: ${appState.subjects.length}'),
+                  Text(
+                      'Anzahl Noten: ${appState.subjects.expand((s) => s.grades).length}'),
                 ],
               ),
             ),
           ),
           const SizedBox(height: 12),
-
           ...appState.subjects.map((subject) {
             if (subject.grades.length < 2) return const SizedBox.shrink();
 
@@ -270,32 +302,19 @@ class _ComprehensiveStatisticsScreenState extends State<ComprehensiveStatisticsS
                         ),
                         const SizedBox(width: 8),
                         Text(subject.name,
-                            style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+                            style: const TextStyle(
+                                fontSize: 16, fontWeight: FontWeight.bold)),
                       ],
                     ),
                     const SizedBox(height: 8),
-                    _buildTrendResult(engine.executeExpression('trend(subject="${subject.name}")')),
+                    Text(
+                        'Durchschnitt: ${subject.averageGrade.toStringAsFixed(2)}'),
+                    Text('Anzahl Noten: ${subject.grades.length}'),
                   ],
                 ),
               ),
             );
           }),
-
-          const SizedBox(height: 16),
-          Card(
-            child: Padding(
-              padding: const EdgeInsets.all(16),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  const Text('Notenverteilung',
-                      style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
-                  const SizedBox(height: 8),
-                  _buildAnalysisResult(engine.executeExpression('grade_distribution')),
-                ],
-              ),
-            ),
-          ),
         ],
       ),
     );
@@ -305,7 +324,8 @@ class _ComprehensiveStatisticsScreenState extends State<ComprehensiveStatisticsS
     return CustomAnalysisWidget(appState: appState);
   }
 
-  Widget _buildStatCard(String title, String value, IconData icon, Color color) {
+  Widget _buildStatCard(
+      String title, String value, IconData icon, Color color) {
     return Card(
       child: Padding(
         padding: const EdgeInsets.all(16),
@@ -313,8 +333,11 @@ class _ComprehensiveStatisticsScreenState extends State<ComprehensiveStatisticsS
           children: [
             Icon(icon, size: 32, color: color),
             const SizedBox(height: 8),
-            Text(value, style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
-            Text(title, style: const TextStyle(fontSize: 12, color: Colors.grey)),
+            Text(value,
+                style:
+                    const TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+            Text(title,
+                style: const TextStyle(fontSize: 12, color: Colors.grey)),
           ],
         ),
       ),
@@ -351,8 +374,7 @@ class _ComprehensiveStatisticsScreenState extends State<ComprehensiveStatisticsS
       return Text(result.error!, style: const TextStyle(color: Colors.red));
     }
 
-    return Text(result.value.toString(),
-        style: const TextStyle(fontSize: 16));
+    return Text(result.value.toString(), style: const TextStyle(fontSize: 16));
   }
 
   Widget _buildAnalysisResult(AnalysisResult result) {

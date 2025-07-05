@@ -54,7 +54,8 @@ class CalendarPreview extends StatelessWidget {
                     Row(
                       children: [
                         IconButton(
-                          onPressed: () => Navigator.pushNamed(context, '/calendar'),
+                          onPressed: () =>
+                              Navigator.pushNamed(context, '/calendar'),
                           icon: const Icon(
                             Icons.calendar_month,
                             color: Colors.white70,
@@ -102,14 +103,14 @@ class CalendarPreview extends StatelessWidget {
                     children: upcomingEvents.take(4).map((event) {
                       final subject = event.subjectId != null
                           ? appState.subjects.firstWhere(
-                            (s) => s.id == event.subjectId,
-                        orElse: () => Subject(
-                          id: '',
-                          name: '',
-                          grades: [],
-                          color: Colors.grey,
-                        ),
-                      )
+                              (s) => s.id == event.subjectId,
+                              orElse: () => Subject(
+                                id: '',
+                                name: '',
+                                grades: [],
+                                color: Colors.grey,
+                              ),
+                            )
                           : null;
 
                       return _buildEventItem(event, subject);
@@ -208,9 +209,13 @@ class CalendarPreview extends StatelessWidget {
               Text(
                 dateText,
                 style: TextStyle(
-                  color: isToday || isTomorrow ? Colors.orange[300] : Colors.white70,
+                  color: isToday || isTomorrow
+                      ? Colors.orange[300]
+                      : Colors.white70,
                   fontSize: 11,
-                  fontWeight: isToday || isTomorrow ? FontWeight.bold : FontWeight.normal,
+                  fontWeight: isToday || isTomorrow
+                      ? FontWeight.bold
+                      : FontWeight.normal,
                 ),
               ),
             ],
@@ -294,7 +299,8 @@ class CalendarPreview extends StatelessWidget {
                   builder: (context, appState, child) {
                     return DropdownButtonFormField<String?>(
                       value: selectedSubjectId,
-                      decoration: const InputDecoration(labelText: 'Fach (optional)'),
+                      decoration:
+                          const InputDecoration(labelText: 'Fach (optional)'),
                       items: [
                         const DropdownMenuItem<String?>(
                           value: null,
@@ -307,7 +313,8 @@ class CalendarPreview extends StatelessWidget {
                           );
                         }),
                       ],
-                      onChanged: (value) => setState(() => selectedSubjectId = value),
+                      onChanged: (value) =>
+                          setState(() => selectedSubjectId = value),
                     );
                   },
                 ),

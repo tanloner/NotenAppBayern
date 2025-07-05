@@ -159,8 +159,8 @@ class _CalendarScreenState extends State<CalendarScreen> {
               color: isSelected
                   ? Theme.of(context).primaryColor
                   : isToday
-                  ? Theme.of(context).primaryColor.withOpacity(0.3)
-                  : null,
+                      ? Theme.of(context).primaryColor.withOpacity(0.3)
+                      : null,
               borderRadius: BorderRadius.circular(8),
               border: isToday && !isSelected
                   ? Border.all(color: Theme.of(context).primaryColor)
@@ -175,8 +175,8 @@ class _CalendarScreenState extends State<CalendarScreen> {
                     color: isSelected
                         ? Colors.white
                         : isToday
-                        ? Theme.of(context).primaryColor
-                        : null,
+                            ? Theme.of(context).primaryColor
+                            : null,
                     fontWeight: isToday ? FontWeight.bold : null,
                   ),
                 ),
@@ -249,7 +249,8 @@ class _CalendarScreenState extends State<CalendarScreen> {
                 ),
                 IconButton(
                   icon: const Icon(Icons.add),
-                  onPressed: () => _showAddEventDialog(context, date: _selectedDate),
+                  onPressed: () =>
+                      _showAddEventDialog(context, date: _selectedDate),
                 ),
               ],
             ),
@@ -257,85 +258,87 @@ class _CalendarScreenState extends State<CalendarScreen> {
           Expanded(
             child: events.isEmpty
                 ? const Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Icon(Icons.event_available, size: 32, color: Colors.grey),
-                  SizedBox(height: 8),
-                  Text(
-                    'Keine Termine an diesem Tag',
-                    style: TextStyle(color: Colors.grey),
-                  ),
-                ],
-              ),
-            )
-                : ListView.builder(
-              padding: const EdgeInsets.symmetric(horizontal: 16),
-              itemCount: events.length,
-              itemBuilder: (context, index) {
-                final event = events[index];
-                final subject = event.subjectId != null
-                    ? appState.subjects.firstWhere(
-                      (s) => s.id == event.subjectId,
-                  orElse: () => Subject(
-                    id: '',
-                    name: '',
-                    grades: [],
-                    color: Colors.grey,
-                  ),
-                )
-                    : null;
-
-                return Card(
-                  margin: const EdgeInsets.only(bottom: 8),
-                  child: ListTile(
-                    leading: CircleAvatar(
-                      backgroundColor: subject?.color.withOpacity(0.2) ??
-                          Colors.grey.withOpacity(0.2),
-                      child: Text(
-                        event.type.icon,
-                        style: const TextStyle(fontSize: 16),
-                      ),
-                    ),
-                    title: Text(event.title),
-                    subtitle: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        if (event.description.isNotEmpty)
-                          Text(event.description),
-                        if (subject != null)
-                          Text(
-                            subject.name,
-                            style: TextStyle(
-                              color: subject.color,
-                              fontWeight: FontWeight.w500,
-                            ),
-                          ),
-                      ],
-                    ),
-                    trailing: PopupMenuButton<String>(
-                      onSelected: (value) {
-                        if (value == 'delete') {
-                          _showDeleteEventDialog(context, event);
-                        }
-                      },
-                      itemBuilder: (context) => [
-                        const PopupMenuItem(
-                          value: 'delete',
-                          child: Row(
-                            children: [
-                              Icon(Icons.delete, color: Colors.red),
-                              SizedBox(width: 8),
-                              Text('Löschen', style: TextStyle(color: Colors.red)),
-                            ],
-                          ),
+                        Icon(Icons.event_available,
+                            size: 32, color: Colors.grey),
+                        SizedBox(height: 8),
+                        Text(
+                          'Keine Termine an diesem Tag',
+                          style: TextStyle(color: Colors.grey),
                         ),
                       ],
                     ),
+                  )
+                : ListView.builder(
+                    padding: const EdgeInsets.symmetric(horizontal: 16),
+                    itemCount: events.length,
+                    itemBuilder: (context, index) {
+                      final event = events[index];
+                      final subject = event.subjectId != null
+                          ? appState.subjects.firstWhere(
+                              (s) => s.id == event.subjectId,
+                              orElse: () => Subject(
+                                id: '',
+                                name: '',
+                                grades: [],
+                                color: Colors.grey,
+                              ),
+                            )
+                          : null;
+
+                      return Card(
+                        margin: const EdgeInsets.only(bottom: 8),
+                        child: ListTile(
+                          leading: CircleAvatar(
+                            backgroundColor: subject?.color.withOpacity(0.2) ??
+                                Colors.grey.withOpacity(0.2),
+                            child: Text(
+                              event.type.icon,
+                              style: const TextStyle(fontSize: 16),
+                            ),
+                          ),
+                          title: Text(event.title),
+                          subtitle: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              if (event.description.isNotEmpty)
+                                Text(event.description),
+                              if (subject != null)
+                                Text(
+                                  subject.name,
+                                  style: TextStyle(
+                                    color: subject.color,
+                                    fontWeight: FontWeight.w500,
+                                  ),
+                                ),
+                            ],
+                          ),
+                          trailing: PopupMenuButton<String>(
+                            onSelected: (value) {
+                              if (value == 'delete') {
+                                _showDeleteEventDialog(context, event);
+                              }
+                            },
+                            itemBuilder: (context) => [
+                              const PopupMenuItem(
+                                value: 'delete',
+                                child: Row(
+                                  children: [
+                                    Icon(Icons.delete, color: Colors.red),
+                                    SizedBox(width: 8),
+                                    Text('Löschen',
+                                        style: TextStyle(color: Colors.red)),
+                                  ],
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      );
+                    },
                   ),
-                );
-              },
-            ),
           ),
         ],
       ),
@@ -344,8 +347,18 @@ class _CalendarScreenState extends State<CalendarScreen> {
 
   String _getMonthYearText(DateTime date) {
     const months = [
-      'Januar', 'Februar', 'März', 'April', 'Mai', 'Juni',
-      'Juli', 'August', 'September', 'Oktober', 'November', 'Dezember'
+      'Januar',
+      'Februar',
+      'März',
+      'April',
+      'Mai',
+      'Juni',
+      'Juli',
+      'August',
+      'September',
+      'Oktober',
+      'November',
+      'Dezember'
     ];
     return '${months[date.month - 1]} ${date.year}';
   }
@@ -424,7 +437,8 @@ class _CalendarScreenState extends State<CalendarScreen> {
                   builder: (context, appState, child) {
                     return DropdownButtonFormField<String?>(
                       value: selectedSubjectId,
-                      decoration: const InputDecoration(labelText: 'Fach (optional)'),
+                      decoration:
+                          const InputDecoration(labelText: 'Fach (optional)'),
                       items: [
                         const DropdownMenuItem<String?>(
                           value: null,
@@ -437,7 +451,8 @@ class _CalendarScreenState extends State<CalendarScreen> {
                           );
                         }),
                       ],
-                      onChanged: (value) => setState(() => selectedSubjectId = value),
+                      onChanged: (value) =>
+                          setState(() => selectedSubjectId = value),
                     );
                   },
                 ),
@@ -479,7 +494,8 @@ class _CalendarScreenState extends State<CalendarScreen> {
       context: context,
       builder: (context) => AlertDialog(
         title: const Text('Termin löschen'),
-        content: Text('Möchtest du den Termin "${event.title}" wirklich löschen?'),
+        content:
+            Text('Möchtest du den Termin "${event.title}" wirklich löschen?'),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),

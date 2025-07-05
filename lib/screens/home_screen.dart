@@ -42,14 +42,12 @@ class HomeScreen extends StatelessWidget {
                   if (subjects.isEmpty) {
                     return CustomScrollView(
                       slivers: [
-
                         const SliverToBoxAdapter(
                           child: ProgressHeader(),
                         ),
                         const SliverToBoxAdapter(
                           child: SizedBox(height: 16),
                         ),
-
                         const SliverToBoxAdapter(
                           child: CalendarPreview(),
                         ),
@@ -81,18 +79,20 @@ class HomeScreen extends StatelessWidget {
                                 ),
                                 const SizedBox(height: 24),
                                 Padding(
-                                  padding: const EdgeInsets.symmetric(horizontal: 32),
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal: 32),
                                   child: SizedBox(
                                     width: double.infinity,
                                     height: 56,
                                     child: ElevatedButton.icon(
-                                      onPressed: () =>
-                                          Navigator.pushNamed(context, '/add-subject'),
+                                      onPressed: () => Navigator.pushNamed(
+                                          context, '/add-subject'),
                                       icon: const Icon(Icons.add),
                                       label: const Text('Fach hinzufügen'),
                                       style: ElevatedButton.styleFrom(
                                         shape: RoundedRectangleBorder(
-                                          borderRadius: BorderRadius.circular(12),
+                                          borderRadius:
+                                              BorderRadius.circular(12),
                                         ),
                                       ),
                                     ),
@@ -117,7 +117,6 @@ class HomeScreen extends StatelessWidget {
                       const SliverToBoxAdapter(
                         child: CalendarPreview(),
                       ),
-
                       const SliverToBoxAdapter(
                         child: SizedBox(height: 16),
                       ),
@@ -125,21 +124,23 @@ class HomeScreen extends StatelessWidget {
                         padding: const EdgeInsets.symmetric(horizontal: 16),
                         sliver: SliverList(
                           delegate: SliverChildBuilderDelegate(
-                                (context, index) {
+                            (context, index) {
                               if (index == subjects.length) {
                                 return Padding(
-                                  padding: const EdgeInsets.only(top: 16, bottom: 32),
+                                  padding: const EdgeInsets.only(
+                                      top: 16, bottom: 32),
                                   child: SizedBox(
                                     width: double.infinity,
                                     height: 56,
                                     child: ElevatedButton.icon(
-                                      onPressed: () =>
-                                          Navigator.pushNamed(context, '/add-subject'),
+                                      onPressed: () => Navigator.pushNamed(
+                                          context, '/add-subject'),
                                       icon: const Icon(Icons.add),
                                       label: const Text('Fach hinzufügen'),
                                       style: ElevatedButton.styleFrom(
                                         shape: RoundedRectangleBorder(
-                                          borderRadius: BorderRadius.circular(12),
+                                          borderRadius:
+                                              BorderRadius.circular(12),
                                         ),
                                       ),
                                     ),
