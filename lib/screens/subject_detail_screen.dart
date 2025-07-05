@@ -107,7 +107,7 @@ class SubjectDetailScreen extends StatelessWidget {
                       if (majorGrades.isEmpty)
                         _buildAddMajorGradePlaceholder(context)
                       else
-                        _buildGradeList(context, majorGrades, true), // true für isMajorGrade
+                        _buildGradeList(context, majorGrades, true),
 
                       const Padding(
                         padding: EdgeInsets.only(top: 24.0, bottom: 8.0),
@@ -117,7 +117,7 @@ class SubjectDetailScreen extends StatelessWidget {
                               fontSize: 18, fontWeight: FontWeight.bold),
                         ),
                       ),
-                      if (minorGrades.isEmpty && majorGrades.isNotEmpty) // Zeige nur, wenn es große LN gibt aber keine kleinen
+                      if (minorGrades.isEmpty && majorGrades.isNotEmpty)
                         const Center(
                           child: Padding(
                             padding: EdgeInsets.symmetric(vertical: 20.0),
@@ -143,9 +143,8 @@ class SubjectDetailScreen extends StatelessWidget {
                           ),
                         )
                       else if (minorGrades.isNotEmpty)
-                        _buildGradeList(context, minorGrades, false), // false für isMajorGrade
+                        _buildGradeList(context, minorGrades, false),
 
-                      // Fallback, wenn gar keine Noten vorhanden sind (optional, je nach gewünschtem Verhalten)
                       if (currentSubject.grades.isEmpty)
                         const Center(
                           child: Padding(
@@ -179,18 +178,16 @@ class SubjectDetailScreen extends StatelessWidget {
         },
       ),
       floatingActionButton: FloatingActionButton(
-        // Anpassen, um den Dialog für kleine oder große Noten zu öffnen
-        onPressed: () => _showAddGradeDialog(context, false), // Standardmäßig für kleine Noten
+        onPressed: () => _showAddGradeDialog(context, false),
         child: const Icon(Icons.add),
       ),
     );
   }
 
-  // Helper-Widget zum Anzeigen der Notenliste
   Widget _buildGradeList(BuildContext context, List<Grade> grades, bool isMajorGradeContext) {
     return ListView.builder(
-      shrinkWrap: true, // Wichtig in einer Column in SingleChildScrollView
-      physics: const NeverScrollableScrollPhysics(), // Verhindert doppeltes Scrollen
+      shrinkWrap: true,
+      physics: const NeverScrollableScrollPhysics(),
       itemCount: grades.length,
       itemBuilder: (context, index) {
         final grade = grades[index];
@@ -227,8 +224,7 @@ class SubjectDetailScreen extends StatelessWidget {
                   onSelected: (value) {
                     if (value == 'delete') {
                       _showDeleteGradeDialog(context, grade);
-                    }
-                    // Hier könntest du auch eine 'edit' Option hinzufügen
+                    } //TODO: maybe edit function
                   },
                   itemBuilder: (BuildContext context) =>
                   <PopupMenuEntry<String>>[
@@ -257,9 +253,9 @@ class SubjectDetailScreen extends StatelessWidget {
     return Card(
       margin: const EdgeInsets.only(bottom: 16),
       elevation: 2,
-      child: InkWell( // Macht die Karte klickbar
-        onTap: () => _showAddGradeDialog(context, true), // true für isMajorGrade
-        borderRadius: BorderRadius.circular(4.0), // Gleicher Radius wie Card
+      child: InkWell(
+        onTap: () => _showAddGradeDialog(context, true),
+        borderRadius: BorderRadius.circular(4.0),
         child: Container(
           padding: const EdgeInsets.symmetric(vertical: 24.0, horizontal: 16.0),
           child: const Row(
@@ -433,7 +429,7 @@ class SubjectDetailScreen extends StatelessWidget {
               Provider.of<AppState>(context, listen: false)
                   .removeSubject(subject.id);
               Navigator.pop(context);
-              Navigator.pop(context); // Einmal mehr, um zum Homescreen zurückzukehren
+              Navigator.pop(context);
             },
             style: TextButton.styleFrom(foregroundColor: Colors.red),
             child: const Text('Löschen'),
@@ -443,58 +439,87 @@ class SubjectDetailScreen extends StatelessWidget {
     );
   }
 
-  // Passe den Dialog an, um zu entscheiden, ob eine große oder kleine Note hinzugefügt wird
   void _showAddGradeDialog(BuildContext context, bool isMajor) {
     final gradeController = TextEditingController();
     final descriptionController = TextEditingController();
-    double weight = isMajor ? 2.0 : 1.0; // Beispiel: Große Noten zählen doppelt
+    final weightController = TextEditingController(text: '1.0');
+    final _formKey = GlobalKey<FormState>();
 
     showDialog(
       context: context,
       builder: (context) => StatefulBuilder(
         builder: (context, setState) => AlertDialog(
           title: Text(isMajor ? 'Großen Leistungsnachweis hinzufügen' : 'Note hinzufügen'),
-          content: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              TextField(
-                controller: gradeController,
-                keyboardType: TextInputType.number,
-                decoration: const InputDecoration(
-                  labelText: 'Note (0-15)',
-                  hintText: '13',
-                ),
-              ),
-              const SizedBox(height: 16),
-              TextField(
-                controller: descriptionController,
-                decoration: InputDecoration(
-                  labelText: 'Beschreibung',
-                  hintText: isMajor ? 'Klausur' : 'Mündliche Note',
-                ),
-              ),
-              const SizedBox(height: 16),
-              // Optionale Gewichtung, wenn benötigt
-              Row(
-                children: [
-                  const Text('Gewichtung: '),
-                  DropdownButton<double>(
-                    value: weight,
-                    items: [1.0, 1.5, 2.0, 0.5].map((double value) { // Beispielwerte
-                      return DropdownMenuItem<double>(
-                        value: value,
-                        child: Text(value.toString()),
-                      );
-                    }).toList(),
-                    onChanged: (newValue) {
-                      setState(() {
-                        weight = newValue!;
-                      });
-                    },
+          content: Form(
+            key: _formKey,
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                TextFormField(
+                  controller: gradeController,
+                  keyboardType: TextInputType.number,
+                  decoration: const InputDecoration(
+                    labelText: 'Note (0-15)',
+                    hintText: '13',
                   ),
-                ],
-              ),
-            ],
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return 'Bitte eine Note eingeben.';
+                    }
+                    final intValue = int.tryParse(value);
+                    if (intValue == null || intValue < 0 || intValue > 15) {
+                      return 'Note muss zwischen 0 und 15 liegen.';
+                    }
+                    return null;
+                  },
+                ),
+                const SizedBox(height: 16),
+                TextFormField(
+                  controller: descriptionController,
+                  decoration: InputDecoration(
+                    labelText: 'Beschreibung',
+                    hintText: isMajor ? 'Klausur' : 'Mündliche Note',
+                  ),
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return 'Bitte eine Beschreibung eingeben.';
+                    }
+                    return null;
+                  },
+                ),
+                const SizedBox(height: 16),
+                TextFormField(
+                  controller: weightController,
+                  keyboardType: const TextInputType.numberWithOptions(decimal: true),
+                  decoration: const InputDecoration(
+                    labelText: 'Gewichtung (0.5 - 4.0)',
+                    hintText: '1.0',
+                  ),
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return 'Bitte eine Gewichtung eingeben.';
+                    }
+                    final doubleValue = double.tryParse(value.replaceFirst(',', '.'));
+                    if (doubleValue == null) {
+                      return 'Ungültige Zahl.';
+                    }
+                    if (doubleValue < 0.5 || doubleValue > 4.0) {
+                      return 'Gewichtung muss zwischen 0.5 und 4.0 liegen.';
+                    }
+                    String normalizedValue = doubleValue.toString();
+                    if (normalizedValue.contains('.')) {
+                      normalizedValue = normalizedValue.replaceAll(RegExp(r'0*$'), '');
+                      normalizedValue = normalizedValue.replaceAll(RegExp(r'\.$'), '');
+                    }
+                    final parts = normalizedValue.split('.');
+                    if (parts.length > 1 && parts[1].length > 2) {
+                      return 'Maximal zwei Nachkommastellen erlaubt.';
+                    }
+                    return null;
+                  },
+                ),
+              ],
+            ),
           ),
           actions: [
             TextButton(
@@ -503,26 +528,28 @@ class SubjectDetailScreen extends StatelessWidget {
             ),
             TextButton(
               onPressed: () {
-                final value = int.tryParse(gradeController.text);
-                final description = descriptionController.text;
+                if (_formKey.currentState!.validate()) {
+                  final value = int.tryParse(gradeController.text);
+                  final description = descriptionController.text;
+                  final weight = double.parse(weightController.text.replaceFirst(',', '.'));
 
-                if (value != null && description.isNotEmpty && value >=0 && value <=15) {
-                  final newGrade = Grade(
-                    id: const Uuid().v4(),
-                    value: value,
-                    description: description,
-                    date: DateTime.now(),
-                    weight: weight,
-                    type: isMajor ? GradeType.big : GradeType.small,
-                  );
-                  Provider.of<AppState>(context, listen: false)
-                      .addGradeToSubject(subject.id, newGrade);
-                  Navigator.pop(context);
-                } else {
-                  // Optional: Fehlermeldung anzeigen
-                  ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(content: Text('Bitte alle Felder korrekt ausfüllen.'))
-                  );
+                  if (value != null && description.isNotEmpty) {
+                    final newGrade = Grade(
+                      id: const Uuid().v4(),
+                      value: value,
+                      description: description,
+                      date: DateTime.now(),
+                      weight: weight,
+                      type: isMajor ? GradeType.big : GradeType.small,
+                    );
+                    Provider.of<AppState>(context, listen: false)
+                        .addGradeToSubject(subject.id, newGrade);
+                    Navigator.pop(context);
+                  } else {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(content: Text('Bitte alle Felder korrekt ausfüllen.'))
+                    );
+                  }
                 }
               },
               child: const Text('Speichern'),
@@ -533,7 +560,6 @@ class SubjectDetailScreen extends StatelessWidget {
     );
   }
 
-  // Hilfsmethode für die Notenfarbe (unverändert)
   Color _getGradeColor(int gradeValue) {
     if (gradeValue >= 10) return Colors.green;
     if (gradeValue >= 5) return Colors.orange;

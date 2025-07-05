@@ -214,7 +214,7 @@ class _SetupScreenState extends State<SetupScreen> {
             itemCount: _setupSubjects.length,
             itemBuilder: (context, index) {
               final subject = _setupSubjects[index];
-              final isFixedLk = subject.name == 'Mathematik';
+              final isFixedLk = subject.name == 'Mathematik' || subject.name == 'Deutsch';
 
               return Card(
                 elevation: 0,
