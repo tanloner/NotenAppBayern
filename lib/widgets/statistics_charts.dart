@@ -107,6 +107,8 @@ class StatisticsCharts extends StatelessWidget {
                   final subject = appState.subjects[value.toInt()];
                   return SideTitleWidget(
                     axisSide: meta.axisSide,
+                    angle: -1.1,
+
                     child: Text(
                       subject.name.length > 8
                           ? '${subject.name.substring(0, 8)}...'
@@ -121,6 +123,7 @@ class StatisticsCharts extends StatelessWidget {
                 }
                 return Container();
               },
+              reservedSize: 40
             ),
           ),
           leftTitles: AxisTitles(
