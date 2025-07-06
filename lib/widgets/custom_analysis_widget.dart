@@ -506,8 +506,10 @@ class _CustomAnalysisWidgetState extends State<CustomAnalysisWidget> {
             ),
             titlesData: FlTitlesData(
               show: true,
-              rightTitles: const AxisTitles(sideTitles: SideTitles(showTitles: false)),
-              topTitles: const AxisTitles(sideTitles: SideTitles(showTitles: false)),
+              rightTitles:
+                  const AxisTitles(sideTitles: SideTitles(showTitles: false)),
+              topTitles:
+                  const AxisTitles(sideTitles: SideTitles(showTitles: false)),
               bottomTitles: AxisTitles(
                 sideTitles: SideTitles(
                   showTitles: true,
@@ -521,7 +523,9 @@ class _CustomAnalysisWidgetState extends State<CustomAnalysisWidget> {
                         axisSide: meta.axisSide,
                         space: 4,
                         child: Text(
-                          label.length > 8 ? '${label.substring(0, 8)}...' : label,
+                          label.length > 8
+                              ? '${label.substring(0, 8)}...'
+                              : label,
                           style: const TextStyle(fontSize: 10),
                         ),
                       );
@@ -535,7 +539,8 @@ class _CustomAnalysisWidgetState extends State<CustomAnalysisWidget> {
                   showTitles: true,
                   reservedSize: 28,
                   getTitlesWidget: (double value, TitleMeta meta) {
-                    return Text(value.toInt().toString(), style: const TextStyle(fontSize: 12));
+                    return Text(value.toInt().toString(),
+                        style: const TextStyle(fontSize: 12));
                   },
                 ),
               ),

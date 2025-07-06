@@ -3,16 +3,17 @@ import 'dart:convert';
 import 'package:flutter/foundation.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import '../models/calendar_event.dart';
 import '../models/grade.dart';
 import '../models/subject.dart';
-import '../models/calendar_event.dart';
 
 class AppState extends ChangeNotifier {
   List<Subject> _subjects = [];
   List<CalendarEvent> _calendarEvents = [];
   double _targetGrade = 15.0;
   bool _isDarkMode = false;
-  String _currentSemester = '1. Halbjahr 2024/25'; //TODO: init depending on current date
+  String _currentSemester =
+      '1. Halbjahr 2024/25'; //TODO: init depending on current date
   bool _isFirstLaunch = true;
 
   List<Subject> get subjects => _subjects;
@@ -44,7 +45,7 @@ class AppState extends ChangeNotifier {
   double get overallAverage {
     if (_subjects.isEmpty) return 0.0;
     double sum =
-    _subjects.fold(0.0, (sum, subject) => sum + subject.averageGrade);
+        _subjects.fold(0.0, (sum, subject) => sum + subject.averageGrade);
 
     int lengthWithout0 =
         _subjects.where((subject) => subject.amountGrades != 0).length;
@@ -160,7 +161,8 @@ class AppState extends ChangeNotifier {
 
       if (eventsJson != null) {
         final List<dynamic> decoded = json.decode(eventsJson);
-        _calendarEvents = decoded.map((e) => CalendarEvent.fromJson(e)).toList();
+        _calendarEvents =
+            decoded.map((e) => CalendarEvent.fromJson(e)).toList();
       }
 
       _targetGrade = target;
@@ -176,9 +178,9 @@ class AppState extends ChangeNotifier {
     try {
       final prefs = await SharedPreferences.getInstance();
       final subjectsJson =
-      json.encode(_subjects.map((s) => s.toJson()).toList());
+          json.encode(_subjects.map((s) => s.toJson()).toList());
       final eventsJson =
-      json.encode(_calendarEvents.map((e) => e.toJson()).toList());
+          json.encode(_calendarEvents.map((e) => e.toJson()).toList());
 
       await prefs.setBool('isFirstLaunch', _isFirstLaunch);
       await prefs.setString('subjects', subjectsJson);

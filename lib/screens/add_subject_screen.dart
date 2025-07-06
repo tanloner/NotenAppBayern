@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_colorpicker/flutter_colorpicker.dart';
 import 'package:provider/provider.dart';
 import 'package:uuid/uuid.dart';
 
 import '../models/subject.dart';
 import '../providers/app_state.dart';
+import '../providers/config.dart';
 
 class AddSubjectScreen extends StatefulWidget {
   const AddSubjectScreen({super.key});
@@ -16,16 +18,35 @@ class _AddSubjectScreenState extends State<AddSubjectScreen> {
   final _nameController = TextEditingController();
   Color _selectedColor = Colors.blue;
 
-  final List<Color> _availableColors = [
-    Colors.blue,
-    Colors.red,
-    Colors.green,
-    Colors.orange,
-    Colors.purple,
-    Colors.teal,
-    Colors.indigo,
-    Colors.pink,
-  ]; //TODO: add other colors and a widget or something where one can select a custom color
+  void _showColorPickerDialog() {
+    Color pickerColor = _selectedColor;
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Wähle eine Farbe'),
+        content: SingleChildScrollView(
+          child: ColorPicker(
+            pickerColor: pickerColor,
+            onColorChanged: (color) => pickerColor = color,
+            pickerAreaHeightPercent: 0.8,
+          ),
+        ),
+        actions: <Widget>[
+          TextButton(
+            child: const Text('Abbrechen'),
+            onPressed: () => Navigator.of(context).pop(),
+          ),
+          TextButton(
+            child: const Text('OK'),
+            onPressed: () {
+              setState(() => _selectedColor = pickerColor);
+              Navigator.of(context).pop();
+            },
+          ),
+        ],
+      ),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -58,28 +79,43 @@ class _AddSubjectScreenState extends State<AddSubjectScreen> {
             ),
             const SizedBox(height: 12),
             Wrap(
-              spacing: 12,
-              children: _availableColors.map((color) {
-                final isSelected = color == _selectedColor;
-                return GestureDetector(
-                  onTap: () => setState(() => _selectedColor = color),
-                  child: Container(
-                    width: 48,
-                    height: 48,
-                    decoration: BoxDecoration(
-                      color: color,
-                      shape: BoxShape.circle,
-                      border: isSelected
-                          ? Border.all(color: Colors.black, width: 3)
+              spacing: 8,
+              runSpacing: 8,
+              children: [
+                ...Config.availableColors.map((color) {
+                  final isSelected = color == _selectedColor;
+                  return GestureDetector(
+                    onTap: () => setState(() => _selectedColor = color),
+                    child: Container(
+                      width: 40,
+                      height: 40,
+                      decoration: BoxDecoration(
+                        color: color,
+                        shape: BoxShape.circle,
+                        border: isSelected
+                            ? Border.all(
+                                color: Theme.of(context).primaryColor, width: 3)
+                            : null,
+                      ),
+                      child: isSelected
+                          ? const Icon(Icons.check, color: Colors.white)
                           : null,
                     ),
-                    margin: const EdgeInsets.all(6),
-                    child: isSelected
-                        ? const Icon(Icons.check, color: Colors.white)
-                        : null,
+                  );
+                }),
+                GestureDetector(
+                  onTap: _showColorPickerDialog,
+                  child: Container(
+                    width: 40,
+                    height: 40,
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      border: Border.all(color: Colors.grey.shade400, width: 2),
+                    ),
+                    child: const Icon(Icons.colorize, color: Colors.grey),
                   ),
-                );
-              }).toList(),
+                ),
+              ],
             ),
             const Spacer(),
             SizedBox(

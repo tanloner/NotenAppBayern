@@ -10,7 +10,6 @@ class StatisticsCharts extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-
     return SingleChildScrollView(
       padding: const EdgeInsets.all(16),
       child: Column(
@@ -100,31 +99,29 @@ class StatisticsCharts extends StatelessWidget {
           ),
           bottomTitles: AxisTitles(
             sideTitles: SideTitles(
-              showTitles: true,
-              getTitlesWidget: (double value, TitleMeta meta) {
-                if (value.toInt() >= 0 &&
-                    value.toInt() < appState.subjects.length) {
-                  final subject = appState.subjects[value.toInt()];
-                  return SideTitleWidget(
-                    axisSide: meta.axisSide,
-                    angle: -1.1,
-
-                    child: Text(
-                      subject.name.length > 8
-                          ? '${subject.name.substring(0, 8)}...'
-                          : subject.name,
-                      style: const TextStyle(
-                        color: Colors.grey,
-                        fontWeight: FontWeight.bold,
-                        fontSize: 12,
+                showTitles: true,
+                getTitlesWidget: (double value, TitleMeta meta) {
+                  if (value.toInt() >= 0 &&
+                      value.toInt() < appState.subjects.length) {
+                    final subject = appState.subjects[value.toInt()];
+                    return SideTitleWidget(
+                      axisSide: meta.axisSide,
+                      angle: -1.1,
+                      child: Text(
+                        subject.name.length > 8
+                            ? '${subject.name.substring(0, 8)}...'
+                            : subject.name,
+                        style: const TextStyle(
+                          color: Colors.grey,
+                          fontWeight: FontWeight.bold,
+                          fontSize: 12,
+                        ),
                       ),
-                    ),
-                  );
-                }
-                return Container();
-              },
-              reservedSize: 40
-            ),
+                    );
+                  }
+                  return Container();
+                },
+                reservedSize: 40),
           ),
           leftTitles: AxisTitles(
             sideTitles: SideTitles(

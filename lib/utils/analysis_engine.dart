@@ -131,7 +131,7 @@ class ProgrammableAnalysisEngine {
           parenDepth++;
         } else if (char == '(') {
           parenDepth--;
-        }else if (parenDepth == 0 && operators.contains(char)) {
+        } else if (parenDepth == 0 && operators.contains(char)) {
           return i;
         }
       }
@@ -202,11 +202,11 @@ class ProgrammableAnalysisEngine {
           parenDepth++;
         } else if (char == ')') {
           parenDepth--;
-        }else if (char == '[') {
+        } else if (char == '[') {
           bracketDepth++;
-        }else if (char == ']') {
+        } else if (char == ']') {
           bracketDepth--;
-        }else if ((char == ';' || char == ',') &&
+        } else if ((char == ';' || char == ',') &&
             parenDepth == 0 &&
             bracketDepth == 0) {
           parts.add(buffer.toString().trim());
@@ -302,7 +302,6 @@ class ProgrammableAnalysisEngine {
     }
   }
 
-
   dynamic _functionShowLine(List<dynamic> args) {
     if (args.isEmpty) throw Exception('show_line() requires data');
 
@@ -319,12 +318,14 @@ class ProgrammableAnalysisEngine {
 
         // Calculate running average
         final gradesUpToNow = sortedGrades.take(i + 1).toList();
-        final totalWeighted = gradesUpToNow.fold(0.0, (sum, g) => sum + (g.value * g.weight));
+        final totalWeighted =
+            gradesUpToNow.fold(0.0, (sum, g) => sum + (g.value * g.weight));
         final totalWeight = gradesUpToNow.fold(0.0, (sum, g) => sum + g.weight);
         final average = totalWeight > 0 ? totalWeighted / totalWeight : 0.0;
 
         chartData.add({
-          'date': grade.date.toIso8601String().substring(0, 10), // YYYY-MM-DD format
+          'date': grade.date.toIso8601String().substring(0, 10),
+          // YYYY-MM-DD format
           'grade': grade.value,
           'average': average,
         });
@@ -352,9 +353,11 @@ class ProgrammableAnalysisEngine {
       ];
 
       for (final range in ranges) {
-        final count = gradeData.grades.where((grade) =>
-        grade.value >= (range['min']! as num) && grade.value <= (range['max']! as num)
-        ).length;
+        final count = gradeData.grades
+            .where((grade) =>
+                grade.value >= (range['min']! as num) &&
+                grade.value <= (range['max']! as num))
+            .length;
 
         if (count > 0) {
           chartData.add({
@@ -380,7 +383,8 @@ class ProgrammableAnalysisEngine {
       final chartData = <Map<String, dynamic>>[];
 
       for (final subject in subjectData.subjects) {
-        if (subject.grades.isNotEmpty) {  // Only show subjects with grades
+        if (subject.grades.isNotEmpty) {
+          // Only show subjects with grades
           chartData.add({
             'label': subject.name,
             'value': subject.averageGrade,
@@ -670,7 +674,8 @@ class ProgrammableAnalysisEngine {
     return null;
   }
 
-  static List<String> get programmingHelpText => [ //TODO: a help function for each function
+  static List<String> get programmingHelpText => [
+        //TODO: a help function for each function
         'PROGRAMMABLE ANALYSIS LANGUAGE (v2)',
         'This engine evaluates expressions with standard math order of operations.',
         '',

@@ -91,17 +91,26 @@ class _ComprehensiveStatisticsScreenState
     final totalGrades = allGrades.length;
     final overallAverage = appState.overallAverage;
 
-    final subjects_have_different_avgs = (appState.subjects.where((s) => s.grades.isNotEmpty)).map((s) => s.averageGrade).toSet().length > 1;
+    final subjects_have_different_avgs =
+        (appState.subjects.where((s) => s.grades.isNotEmpty))
+                .map((s) => s.averageGrade)
+                .toSet()
+                .length >
+            1;
 
-    final bestSubject = (appState.subjects.isNotEmpty && subjects_have_different_avgs)
-        ? appState.subjects
-            .reduce((a, b) => (a.averageGrade > b.averageGrade) && a.amountGrades != 0 ? a : b)
+    final bestSubject = (appState.subjects.isNotEmpty &&
+            subjects_have_different_avgs)
+        ? appState.subjects.reduce((a, b) =>
+            (a.averageGrade > b.averageGrade) && a.amountGrades != 0 ? a : b)
         : null;
-
 
     final worstSubject = appState.subjects.isNotEmpty
         ? appState.subjects
-            .reduce((a, b) => (a.amountGrades != 0) && (b.amountGrades == 0) ? a : (a.averageGrade < b.averageGrade) ? a : b)
+            .reduce((a, b) => (a.amountGrades != 0) && (b.amountGrades == 0)
+                ? a
+                : (a.averageGrade < b.averageGrade)
+                    ? a
+                    : b)
         : null;
 
     final recentGrades = allGrades
@@ -252,7 +261,6 @@ class _ComprehensiveStatisticsScreenState
   }
 
   Widget _buildTrendsTab(AppState appState) {
-
     return SingleChildScrollView(
       padding: const EdgeInsets.all(16),
       child: Column(

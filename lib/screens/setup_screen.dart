@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_colorpicker/flutter_colorpicker.dart';
 import 'package:provider/provider.dart';
 import 'package:uuid/uuid.dart';
 
@@ -34,19 +35,6 @@ class _SetupScreenState extends State<SetupScreen> {
   String _selectedSemester = '1. Halbjahr 2024/25';
   double _targetGrade = 12.0;
   late List<_SetupSubject> _setupSubjects;
-
-  final List<Color> _availableColors = [
-    Colors.blue,
-    Colors.red,
-    Colors.green,
-    Colors.orange,
-    Colors.purple,
-    Colors.teal,
-    Colors.indigo,
-    Colors.pink,
-    Colors.amber,
-    Colors.cyan,
-  ];
 
   @override
   void initState() {
@@ -95,6 +83,36 @@ class _SetupScreenState extends State<SetupScreen> {
       appState.addSubject(newSubject);
     }
     appState.setFirstLaunch(false);
+  }
+
+  void _showColorPickerDialogForSubject(_SetupSubject subject) {
+    Color pickerColor = subject.color;
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Wähle eine Farbe'),
+        content: SingleChildScrollView(
+          child: ColorPicker(
+            pickerColor: pickerColor,
+            onColorChanged: (color) => pickerColor = color,
+            pickerAreaHeightPercent: 0.8,
+          ),
+        ),
+        actions: <Widget>[
+          TextButton(
+            child: const Text('Abbrechen'),
+            onPressed: () => Navigator.of(context).pop(),
+          ),
+          TextButton(
+            child: const Text('OK'),
+            onPressed: () {
+              setState(() => subject.color = pickerColor);
+              Navigator.of(context).pop();
+            },
+          ),
+        ],
+      ),
+    );
   }
 
   @override
@@ -214,7 +232,8 @@ class _SetupScreenState extends State<SetupScreen> {
             itemCount: _setupSubjects.length,
             itemBuilder: (context, index) {
               final subject = _setupSubjects[index];
-              final isFixedLk = subject.name == 'Mathematik' || subject.name == 'Deutsch';
+              final isFixedLk =
+                  subject.name == 'Mathematik' || subject.name == 'Deutsch';
 
               return Card(
                 elevation: 0,
@@ -288,29 +307,48 @@ class _SetupScreenState extends State<SetupScreen> {
                     Padding(
                       padding: const EdgeInsets.all(16.0),
                       child: Wrap(
-                        spacing: 12,
-                        runSpacing: 12,
-                        children: _availableColors.map((color) {
-                          return GestureDetector(
-                            onTap: () => setState(() => subject.color = color),
+                        spacing: 8,
+                        runSpacing: 8,
+                        children: [
+                          ...Config.availableColors.map((color) {
+                            return GestureDetector(
+                              onTap: () =>
+                                  setState(() => subject.color = color),
+                              child: Container(
+                                width: 40,
+                                height: 40,
+                                decoration: BoxDecoration(
+                                  color: color,
+                                  shape: BoxShape.circle,
+                                  border: subject.color == color
+                                      ? Border.all(
+                                          color: Theme.of(context).primaryColor,
+                                          width: 3)
+                                      : null,
+                                ),
+                                child: subject.color == color
+                                    ? const Icon(Icons.check,
+                                        color: Colors.white)
+                                    : null,
+                              ),
+                            );
+                          }),
+                          GestureDetector(
+                            onTap: () =>
+                                _showColorPickerDialogForSubject(subject),
                             child: Container(
                               width: 40,
                               height: 40,
                               decoration: BoxDecoration(
-                                color: color,
                                 shape: BoxShape.circle,
-                                border: subject.color == color
-                                    ? Border.all(
-                                        color: Theme.of(context).primaryColor,
-                                        width: 3)
-                                    : null,
+                                border: Border.all(
+                                    color: Colors.grey.shade400, width: 2),
                               ),
-                              child: subject.color == color
-                                  ? const Icon(Icons.check, color: Colors.white)
-                                  : null,
+                              child: const Icon(Icons.colorize,
+                                  color: Colors.grey),
                             ),
-                          );
-                        }).toList(),
+                          ),
+                        ],
                       ),
                     ),
                   ],

@@ -1,9 +1,4 @@
-enum GradeType{
-  big,
-  small,
-  other
-}
-
+enum GradeType { big, small, other }
 
 class Grade {
   final String id;
@@ -13,14 +8,13 @@ class Grade {
   final double weight;
   final GradeType type;
 
-  Grade({
-    required this.id,
-    required this.value,
-    required this.description,
-    required this.date,
-    this.weight = 1.0,
-    this.type = GradeType.other
-  });
+  Grade(
+      {required this.id,
+      required this.value,
+      required this.description,
+      required this.date,
+      this.weight = 1.0,
+      this.type = GradeType.other});
 
   Map<String, dynamic> toJson() {
     return {

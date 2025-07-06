@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_colorpicker/flutter_colorpicker.dart';
 import 'package:provider/provider.dart';
 import 'package:uuid/uuid.dart';
 
 import '../models/grade.dart';
 import '../models/subject.dart';
 import '../providers/app_state.dart';
+import '../providers/config.dart';
 
 class SubjectDetailScreen extends StatelessWidget {
   final Subject subject;
@@ -52,11 +54,11 @@ class SubjectDetailScreen extends StatelessWidget {
       body: Consumer<AppState>(
         builder: (context, appState, child) {
           final currentSubject =
-          appState.subjects.firstWhere((s) => s.id == subject.id);
+              appState.subjects.firstWhere((s) => s.id == subject.id);
           final majorGrades =
-          currentSubject.grades.where((g) => g.isBig).toList();
+              currentSubject.grades.where((g) => g.isBig).toList();
           final minorGrades =
-          currentSubject.grades.where((g) => !g.isBig).toList();
+              currentSubject.grades.where((g) => !g.isBig).toList();
 
           return Column(
             children: [
@@ -108,7 +110,6 @@ class SubjectDetailScreen extends StatelessWidget {
                         _buildAddMajorGradePlaceholder(context)
                       else
                         _buildGradeList(context, majorGrades, true),
-
                       const Padding(
                         padding: EdgeInsets.only(top: 24.0, bottom: 8.0),
                         child: Text(
@@ -144,7 +145,6 @@ class SubjectDetailScreen extends StatelessWidget {
                         )
                       else if (minorGrades.isNotEmpty)
                         _buildGradeList(context, minorGrades, false),
-
                       if (currentSubject.grades.isEmpty)
                         const Center(
                           child: Padding(
@@ -184,7 +184,8 @@ class SubjectDetailScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildGradeList(BuildContext context, List<Grade> grades, bool isMajorGradeContext) {
+  Widget _buildGradeList(
+      BuildContext context, List<Grade> grades, bool isMajorGradeContext) {
     return ListView.builder(
       shrinkWrap: true,
       physics: const NeverScrollableScrollPhysics(),
@@ -216,7 +217,7 @@ class SubjectDetailScreen extends StatelessWidget {
                     label: Text('${grade.weight}x'),
                     backgroundColor: Colors.grey[200],
                     padding:
-                    const EdgeInsets.symmetric(horizontal: 4, vertical: 2),
+                        const EdgeInsets.symmetric(horizontal: 4, vertical: 2),
                     labelStyle: const TextStyle(fontSize: 12),
                   ),
                 PopupMenuButton<String>(
@@ -227,7 +228,7 @@ class SubjectDetailScreen extends StatelessWidget {
                     } //TODO: maybe edit function
                   },
                   itemBuilder: (BuildContext context) =>
-                  <PopupMenuEntry<String>>[
+                      <PopupMenuEntry<String>>[
                     const PopupMenuItem<String>(
                       value: 'delete',
                       child: Row(
@@ -248,7 +249,6 @@ class SubjectDetailScreen extends StatelessWidget {
     );
   }
 
-  // Placeholder-Widget, wenn kein großer Leistungsnachweis vorhanden ist
   Widget _buildAddMajorGradePlaceholder(BuildContext context) {
     return Card(
       margin: const EdgeInsets.only(bottom: 16),
@@ -265,7 +265,10 @@ class SubjectDetailScreen extends StatelessWidget {
               SizedBox(width: 12),
               Text(
                 'Großen Leistungsnachweis hinzufügen',
-                style: TextStyle(fontSize: 16, color: Colors.blue, fontWeight: FontWeight.w500),
+                style: TextStyle(
+                    fontSize: 16,
+                    color: Colors.blue,
+                    fontWeight: FontWeight.w500),
               ),
             ],
           ),
@@ -273,7 +276,6 @@ class SubjectDetailScreen extends StatelessWidget {
       ),
     );
   }
-
 
   void _showDeleteGradeDialog(BuildContext context, Grade grade) {
     showDialog(
@@ -316,18 +318,6 @@ class SubjectDetailScreen extends StatelessWidget {
     final nameController = TextEditingController(text: subject.name);
     Color selectedColor = subject.color;
     bool isAdvanced = subject.isLk;
-    final List<Color> colorOptions = [
-      Colors.blue,
-      Colors.green,
-      Colors.red,
-      Colors.orange,
-      Colors.purple,
-      Colors.teal,
-      Colors.pink,
-      Colors.amber,
-      Colors.indigo,
-      Colors.cyan
-    ];
 
     showDialog(
       context: context,
@@ -339,6 +329,7 @@ class SubjectDetailScreen extends StatelessWidget {
               content: SingleChildScrollView(
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     TextField(
                       controller: nameController,
@@ -347,31 +338,80 @@ class SubjectDetailScreen extends StatelessWidget {
                       ),
                     ),
                     const SizedBox(height: 24),
-                    const Align(
-                      alignment: Alignment.centerLeft,
-                      child: Text('Farbe wählen',
-                          style: TextStyle(color: Colors.grey)),
-                    ),
-                    const SizedBox(height: 8),
+                    Text('Farbe',
+                        style: Theme.of(context).textTheme.titleMedium),
+                    const SizedBox(height: 12),
                     Wrap(
-                      spacing: 8.0,
-                      runSpacing: 8.0,
-                      children: colorOptions.map((color) {
-                        return GestureDetector(
+                      spacing: 8,
+                      runSpacing: 8,
+                      children: [
+                        ...Config.availableColors.map((color) {
+                          return GestureDetector(
+                            onTap: () => setState(() => selectedColor = color),
+                            child: Container(
+                              width: 40,
+                              height: 40,
+                              decoration: BoxDecoration(
+                                color: color,
+                                shape: BoxShape.circle,
+                                border: selectedColor == color
+                                    ? Border.all(
+                                        color: Theme.of(context).primaryColor,
+                                        width: 3)
+                                    : null,
+                              ),
+                              child: selectedColor == color
+                                  ? const Icon(Icons.check, color: Colors.white)
+                                  : null,
+                            ),
+                          );
+                        }),
+                        GestureDetector(
                           onTap: () {
-                            setState(() {
-                              selectedColor = color;
-                            });
+                            Color pickerColor = selectedColor;
+                            showDialog(
+                              context: context,
+                              builder: (dialogContext) => AlertDialog(
+                                title: const Text('Wähle eine Farbe'),
+                                content: SingleChildScrollView(
+                                  child: ColorPicker(
+                                    pickerColor: pickerColor,
+                                    onColorChanged: (color) =>
+                                        pickerColor = color,
+                                    pickerAreaHeightPercent: 0.8,
+                                  ),
+                                ),
+                                actions: <Widget>[
+                                  TextButton(
+                                    child: const Text('Abbrechen'),
+                                    onPressed: () =>
+                                        Navigator.of(dialogContext).pop(),
+                                  ),
+                                  TextButton(
+                                    child: const Text('OK'),
+                                    onPressed: () {
+                                      setState(
+                                          () => selectedColor = pickerColor);
+                                      Navigator.of(dialogContext).pop();
+                                    },
+                                  ),
+                                ],
+                              ),
+                            );
                           },
-                          child: CircleAvatar(
-                            radius: 18,
-                            backgroundColor: color,
-                            child: selectedColor == color
-                                ? const Icon(Icons.check, color: Colors.white)
-                                : null,
+                          child: Container(
+                            width: 40,
+                            height: 40,
+                            decoration: BoxDecoration(
+                              shape: BoxShape.circle,
+                              border: Border.all(
+                                  color: Colors.grey.shade400, width: 2),
+                            ),
+                            child:
+                                const Icon(Icons.colorize, color: Colors.grey),
                           ),
-                        );
-                      }).toList(),
+                        ),
+                      ],
                     ),
                     const SizedBox(height: 16),
                     SwitchListTile(
@@ -418,7 +458,7 @@ class SubjectDetailScreen extends StatelessWidget {
       builder: (context) => AlertDialog(
         title: const Text('Fach löschen'),
         content:
-        Text('Möchtest du das Fach "${subject.name}" wirklich löschen?'),
+            Text('Möchtest du das Fach "${subject.name}" wirklich löschen?'),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
@@ -449,7 +489,9 @@ class SubjectDetailScreen extends StatelessWidget {
       context: context,
       builder: (context) => StatefulBuilder(
         builder: (context, setState) => AlertDialog(
-          title: Text(isMajor ? 'Großen Leistungsnachweis hinzufügen' : 'Note hinzufügen'),
+          title: Text(isMajor
+              ? 'Großen Leistungsnachweis hinzufügen'
+              : 'Note hinzufügen'),
           content: Form(
             key: _formKey,
             child: Column(
@@ -490,7 +532,8 @@ class SubjectDetailScreen extends StatelessWidget {
                 const SizedBox(height: 16),
                 TextFormField(
                   controller: weightController,
-                  keyboardType: const TextInputType.numberWithOptions(decimal: true),
+                  keyboardType:
+                      const TextInputType.numberWithOptions(decimal: true),
                   decoration: const InputDecoration(
                     labelText: 'Gewichtung (0.5 - 4.0)',
                     hintText: '1.0',
@@ -499,7 +542,8 @@ class SubjectDetailScreen extends StatelessWidget {
                     if (value == null || value.isEmpty) {
                       return 'Bitte eine Gewichtung eingeben.';
                     }
-                    final doubleValue = double.tryParse(value.replaceFirst(',', '.'));
+                    final doubleValue =
+                        double.tryParse(value.replaceFirst(',', '.'));
                     if (doubleValue == null) {
                       return 'Ungültige Zahl.';
                     }
@@ -508,8 +552,10 @@ class SubjectDetailScreen extends StatelessWidget {
                     }
                     String normalizedValue = doubleValue.toString();
                     if (normalizedValue.contains('.')) {
-                      normalizedValue = normalizedValue.replaceAll(RegExp(r'0*$'), '');
-                      normalizedValue = normalizedValue.replaceAll(RegExp(r'\.$'), '');
+                      normalizedValue =
+                          normalizedValue.replaceAll(RegExp(r'0*$'), '');
+                      normalizedValue =
+                          normalizedValue.replaceAll(RegExp(r'\.$'), '');
                     }
                     final parts = normalizedValue.split('.');
                     if (parts.length > 1 && parts[1].length > 2) {
@@ -531,7 +577,8 @@ class SubjectDetailScreen extends StatelessWidget {
                 if (_formKey.currentState!.validate()) {
                   final value = int.tryParse(gradeController.text);
                   final description = descriptionController.text;
-                  final weight = double.parse(weightController.text.replaceFirst(',', '.'));
+                  final weight = double.parse(
+                      weightController.text.replaceFirst(',', '.'));
 
                   if (value != null && description.isNotEmpty) {
                     final newGrade = Grade(
@@ -546,9 +593,8 @@ class SubjectDetailScreen extends StatelessWidget {
                         .addGradeToSubject(subject.id, newGrade);
                     Navigator.pop(context);
                   } else {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(content: Text('Bitte alle Felder korrekt ausfüllen.'))
-                    );
+                    ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+                        content: Text('Bitte alle Felder korrekt ausfüllen.')));
                   }
                 }
               },
