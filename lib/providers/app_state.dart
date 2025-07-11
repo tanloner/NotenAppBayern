@@ -17,10 +17,15 @@ class AppState extends ChangeNotifier {
   bool _isFirstLaunch = true;
 
   List<Subject> get subjects => _subjects;
+
   List<CalendarEvent> get calendarEvents => _calendarEvents;
+
   double get targetGrade => _targetGrade;
+
   bool get isDarkMode => _isDarkMode;
+
   String get currentSemester => _currentSemester;
+
   bool get isFirstLaunch => _isFirstLaunch;
 
   List<CalendarEvent> get upcomingEvents {
@@ -44,9 +49,28 @@ class AppState extends ChangeNotifier {
 
   double get overallAverage {
     if (_subjects.isEmpty) return 0.0;
+    double sum = _subjects.fold(
+        0.0, (sum, subject) => sum + subject.averageGradeSemester(semester));
+
+    int lengthWithout0 =
+        _subjects.where((subject) => subject.amountGrades != 0).length;
+    return lengthWithout0 > 0 ? sum / lengthWithout0 : 0.0;
+  }
+
+  double get allSemestersOverallAverageWrong {
+    //muss man anders berechnen... (TODO!!)
+    if (_subjects.isEmpty) return 0.0;
     double sum =
         _subjects.fold(0.0, (sum, subject) => sum + subject.averageGrade);
+    int lengthWithout0 =
+        _subjects.where((subject) => subject.amountGrades != 0).length;
+    return lengthWithout0 > 0 ? sum / lengthWithout0 : 0.0;
+  }
 
+  double get allSemestersOverallAverage {
+    if (_subjects.isEmpty) return 0.0;
+    double sum =
+        _subjects.fold(0.0, (sum, subject) => subject.globalAverage + sum);
     int lengthWithout0 =
         _subjects.where((subject) => subject.amountGrades != 0).length;
     return lengthWithout0 > 0 ? sum / lengthWithout0 : 0.0;
@@ -54,6 +78,48 @@ class AppState extends ChangeNotifier {
 
   double get progressToTarget {
     return (overallAverage / _targetGrade).clamp(0.0, 1.0);
+  }
+
+  Semester get semester {
+    return Semester.fromString(_currentSemester);
+  }
+
+  double calculateSemesterAverageWithTemporaryGrade(
+      Subject subject, Grade temporaryGrade) {
+    if (_subjects.isEmpty) return 0.0;
+    double sum = _subjects.fold(
+        0.0,
+        (sum, sub) => (sub != subject)
+            ? sum + sub.averageGradeSemester(semester)
+            : sum +
+                calculateSubjectAverageWithTemporaryGrade(
+                    subject, temporaryGrade));
+
+    int lengthWithout0 = _subjects
+        .where((sub) => (sub.amountGrades != 0) || (sub == subject))
+        .length;
+    return lengthWithout0 > 0 ? sum / lengthWithout0 : 0.0;
+  }
+
+  double calculateSubjectAverageWithTemporaryGrade(
+      Subject subject, Grade temporaryGrade) {
+    List<Grade> grades = subject.semesterGrades(semester);
+    grades.add(temporaryGrade);
+
+    if (grades.isEmpty) return 0.0;
+    double sumSmall = grades.fold(0.0,
+        (sum, grade) => grade.isBig ? sum : sum + grade.value * grade.weight);
+    double weightSmall = grades.fold(
+        0.0, (sum, grade) => grade.isBig ? sum : sum + grade.weight);
+    double sumBig = grades.fold(0.0,
+        (sum, grade) => grade.isBig ? sum + grade.value * grade.weight : sum);
+    double weightBig = grades.fold(
+        0.0, (sum, grade) => grade.isBig ? sum + grade.weight : sum);
+    if (weightSmall == 0) return sumBig / weightBig;
+    if (weightBig == 0) return sumSmall / weightSmall;
+    double smallGrade = sumSmall / weightSmall;
+    double bigGrade = sumBig / weightBig;
+    return (smallGrade + bigGrade) / 2;
   }
 
   void setDarkMode(bool value) {

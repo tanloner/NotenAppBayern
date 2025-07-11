@@ -174,8 +174,9 @@ class StatisticsCharts extends StatelessWidget {
       return const Center(child: Text('Keine Noten verfügbar'));
     }
 
-    final average = allGrades.fold(0.0, (sum, grade) => sum + grade.value) /
-        allGrades.length;
+    /*final average = allGrades.fold(0.0, (sum, grade) => sum + grade.value) /
+        allGrades.length;*/
+    final average = appState.allSemestersOverallAverage;
     final highest =
         allGrades.map((g) => g.value).reduce((a, b) => a > b ? a : b);
     final lowest =

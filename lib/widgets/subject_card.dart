@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 import '../models/subject.dart';
+import '../providers/app_state.dart';
 
 class SubjectCard extends StatelessWidget {
   final Subject subject;
@@ -56,7 +58,7 @@ class SubjectCard extends StatelessWidget {
                     ),
                     const SizedBox(height: 4),
                     Text(
-                      '${subject.grades.length} Note${subject.grades.length != 1 ? 'n' : ''}',
+                      '${subject.semesterGrades(Provider.of<AppState>(context, listen: false).semester).length} Note${subject.grades.length != 1 ? 'n' : ''}',
                       style: TextStyle(
                         fontSize: 14,
                         color: Colors.grey[600],
@@ -69,11 +71,17 @@ class SubjectCard extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.end,
                 children: [
                   Text(
-                    subject.averageGrade.toStringAsFixed(1),
+                    subject
+                        .averageGradeSemester(
+                            Provider.of<AppState>(context, listen: false)
+                                .semester)
+                        .toStringAsFixed(1),
                     style: TextStyle(
                       fontSize: 24,
                       fontWeight: FontWeight.bold,
-                      color: _getGradeColor(subject.averageGrade),
+                      color: _getGradeColor(subject.averageGradeSemester(
+                          Provider.of<AppState>(context, listen: false)
+                              .semester)),
                     ),
                   ),
                   Text(

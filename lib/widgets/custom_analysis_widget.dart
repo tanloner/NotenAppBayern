@@ -517,7 +517,6 @@ class _CustomAnalysisWidgetState extends State<CustomAnalysisWidget> {
                   getTitlesWidget: (double value, TitleMeta meta) {
                     final index = value.toInt();
                     if (index >= 0 && index < data.length) {
-                      // KORREKTUR: Greift auf den 'label'-Schlüssel zu.
                       final label = data[index]['label']?.toString() ?? '';
                       return SideTitleWidget(
                         axisSide: meta.axisSide,
@@ -550,7 +549,6 @@ class _CustomAnalysisWidgetState extends State<CustomAnalysisWidget> {
               final index = entry.key;
               final item = entry.value;
 
-              // KORREKTUR: Greift explizit auf den 'value'-Schlüssel zu.
               final rawValue = item['value'];
               num? numericValue;
 

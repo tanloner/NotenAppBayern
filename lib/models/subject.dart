@@ -17,7 +17,7 @@ class Subject {
       this.isLk = false});
 
   double get averageGrade {
-/*    if (grades.isEmpty) return 0.0;
+    /*    if (grades.isEmpty) return 0.0;
     double sum =
         grades.fold(0.0, (sum, grade) => sum + grade.value * grade.weight);
     double weightSum = grades.fold(0.0, (sum, grade) => sum + grade.weight);
@@ -40,6 +40,42 @@ class Subject {
     double smallGrade = sumSmall / weightSmall;
     double bigGrade = sumBig / weightBig;
     return (smallGrade + bigGrade) / 2;
+  }
+
+  double averageGradeSemester(Semester semester) {
+    List<Grade> semesterGrades =
+        grades.where((grade) => grade.semester == semester).toList();
+    if (semesterGrades.isEmpty) return 0.0;
+    double sumSmall = semesterGrades.fold(0.0,
+        (sum, grade) => grade.isBig ? sum : sum + grade.value * grade.weight);
+    double weightSmall = semesterGrades.fold(
+        0.0, (sum, grade) => grade.isBig ? sum : sum + grade.weight);
+    double sumBig = semesterGrades.fold(0.0,
+        (sum, grade) => grade.isBig ? sum + grade.value * grade.weight : sum);
+    double weightBig = semesterGrades.fold(
+        0.0, (sum, grade) => grade.isBig ? sum + grade.weight : sum);
+    if (weightSmall == 0) return sumBig / weightBig;
+    if (weightBig == 0) return sumSmall / weightSmall;
+    double smallGrade = sumSmall / weightSmall;
+    double bigGrade = sumBig / weightBig;
+    return (smallGrade + bigGrade) / 2;
+  }
+
+  double get globalAverage {
+    if (grades.isEmpty) return 0.0;
+    double sum = averageGradeSemester(Semester.first) +
+        averageGradeSemester(Semester.second) +
+        averageGradeSemester(Semester.third) +
+        averageGradeSemester(Semester.fourth);
+    int lengthWithout0 =
+        Set<Semester>.from(grades.map((grade) => grade.semester)).length;
+    return lengthWithout0 > 0 ? sum / lengthWithout0 : 0.0;
+  }
+
+  List<Grade> semesterGrades(Semester semester) {
+    List<Grade> semesterGrades =
+        grades.where((grade) => grade.semester == semester).toList();
+    return semesterGrades;
   }
 
   bool get hasBigGrade {

@@ -82,7 +82,9 @@ class SubjectDetailScreen extends StatelessWidget {
                     ),
                     const SizedBox(height: 8),
                     Text(
-                      currentSubject.averageGrade.toStringAsFixed(2),
+                      currentSubject
+                          .averageGradeSemester(appState.semester)
+                          .toStringAsFixed(2),
                       style: TextStyle(
                         fontSize: 32,
                         fontWeight: FontWeight.bold,
@@ -98,18 +100,22 @@ class SubjectDetailScreen extends StatelessWidget {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      const Padding(
-                        padding: EdgeInsets.only(top: 16.0, bottom: 8.0),
-                        child: Text(
-                          'Großer Leistungsnachweis',
-                          style: TextStyle(
-                              fontSize: 18, fontWeight: FontWeight.bold),
+                      if (appState.semester != Semester.fourth ||
+                          subject.isLk) ...[
+                        const Padding(
+                          padding: EdgeInsets.only(top: 16.0, bottom: 8.0),
+                          child: Text(
+                            'Großer Leistungsnachweis',
+                            style: TextStyle(
+                                fontSize: 18, fontWeight: FontWeight.bold),
+                          ),
                         ),
-                      ),
-                      if (majorGrades.isEmpty)
-                        _buildAddMajorGradePlaceholder(context)
-                      else
-                        _buildGradeList(context, majorGrades, true),
+                        if (!(majorGrades.any(
+                            (grade) => grade.semester == appState.semester)))
+                          _buildAddMajorGradePlaceholder(context)
+                        else
+                          _buildGradeList(context, majorGrades, true),
+                      ],
                       const Padding(
                         padding: EdgeInsets.only(top: 24.0, bottom: 8.0),
                         child: Text(
@@ -186,12 +192,17 @@ class SubjectDetailScreen extends StatelessWidget {
 
   Widget _buildGradeList(
       BuildContext context, List<Grade> grades, bool isMajorGradeContext) {
+    List<Grade> semesterGrades = grades
+        .where((grade) =>
+            grade.semester ==
+            Provider.of<AppState>(context, listen: false).semester)
+        .toList();
     return ListView.builder(
       shrinkWrap: true,
       physics: const NeverScrollableScrollPhysics(),
-      itemCount: grades.length,
+      itemCount: semesterGrades.length,
       itemBuilder: (context, index) {
-        final grade = grades[index];
+        final grade = semesterGrades[index];
         return Card(
           margin: const EdgeInsets.only(bottom: 8),
           child: ListTile(
@@ -483,125 +494,297 @@ class SubjectDetailScreen extends StatelessWidget {
     final gradeController = TextEditingController();
     final descriptionController = TextEditingController();
     final weightController = TextEditingController(text: '1.0');
-    final _formKey = GlobalKey<FormState>();
+    final formKey = GlobalKey<FormState>();
+    bool isWhatIfMode = false;
+    int whatIfGradeValue = 8;
+    AppState appState = Provider.of<AppState>(context, listen: false);
+    double currentSubjectAverage =
+        subject.averageGradeSemester(appState.semester);
+    double currentSemesterAverage = appState.overallAverage;
+
+    double whatIfSubjectAverage = currentSubjectAverage;
+    double whatIfSemesterAverage = currentSemesterAverage;
 
     showDialog(
       context: context,
-      builder: (context) => StatefulBuilder(
-        builder: (context, setState) => AlertDialog(
-          title: Text(isMajor
-              ? 'Großen Leistungsnachweis hinzufügen'
-              : 'Note hinzufügen'),
-          content: Form(
-            key: _formKey,
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
+      builder: (dialogContext) => StatefulBuilder(
+        builder: (context, setStateDialog) {
+          void updateWhatIfAverages(int tempGradeValue) {
+            final appState = Provider.of<AppState>(context, listen: false);
+            final tempWeight =
+                double.tryParse(weightController.text.replaceFirst(',', '.')) ??
+                    1.0;
+
+            whatIfSubjectAverage =
+                appState.calculateSubjectAverageWithTemporaryGrade(
+              subject,
+              Grade(
+                id: 'temp',
+                value: tempGradeValue,
+                description: '',
+                date: DateTime.now(),
+                semester: appState.semester,
+                weight: tempWeight,
+                type: isMajor ? GradeType.big : GradeType.small,
+              ),
+            );
+
+            whatIfSemesterAverage =
+                appState.calculateSemesterAverageWithTemporaryGrade(
+              subject,
+              Grade(
+                id: 'temp',
+                value: tempGradeValue,
+                description: '',
+                date: DateTime.now(),
+                semester: appState.semester,
+                weight: tempWeight,
+                type: isMajor ? GradeType.big : GradeType.small,
+              ),
+            );
+          }
+
+          return AlertDialog(
+            title: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                TextFormField(
-                  controller: gradeController,
-                  keyboardType: TextInputType.number,
-                  decoration: const InputDecoration(
-                    labelText: 'Note (0-15)',
-                    hintText: '13',
+                Flexible(
+                  child: Text(
+                    isWhatIfMode
+                        ? 'What if...'
+                        : (isMajor
+                            ? 'Großen Leistungsnachweis hinzufügen'
+                            : 'Note hinzufügen'),
                   ),
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return 'Bitte eine Note eingeben.';
-                    }
-                    final intValue = int.tryParse(value);
-                    if (intValue == null || intValue < 0 || intValue > 15) {
-                      return 'Note muss zwischen 0 und 15 liegen.';
-                    }
-                    return null;
-                  },
-                ),
-                const SizedBox(height: 16),
-                TextFormField(
-                  controller: descriptionController,
-                  decoration: InputDecoration(
-                    labelText: 'Beschreibung',
-                    hintText: isMajor ? 'Klausur' : 'Mündliche Note',
-                  ),
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return 'Bitte eine Beschreibung eingeben.';
-                    }
-                    return null;
-                  },
-                ),
-                const SizedBox(height: 16),
-                TextFormField(
-                  controller: weightController,
-                  keyboardType:
-                      const TextInputType.numberWithOptions(decimal: true),
-                  decoration: const InputDecoration(
-                    labelText: 'Gewichtung (0.5 - 4.0)',
-                    hintText: '1.0',
-                  ),
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return 'Bitte eine Gewichtung eingeben.';
-                    }
-                    final doubleValue =
-                        double.tryParse(value.replaceFirst(',', '.'));
-                    if (doubleValue == null) {
-                      return 'Ungültige Zahl.';
-                    }
-                    if (doubleValue < 0.5 || doubleValue > 4.0) {
-                      return 'Gewichtung muss zwischen 0.5 und 4.0 liegen.';
-                    }
-                    String normalizedValue = doubleValue.toString();
-                    if (normalizedValue.contains('.')) {
-                      normalizedValue =
-                          normalizedValue.replaceAll(RegExp(r'0*$'), '');
-                      normalizedValue =
-                          normalizedValue.replaceAll(RegExp(r'\.$'), '');
-                    }
-                    final parts = normalizedValue.split('.');
-                    if (parts.length > 1 && parts[1].length > 2) {
-                      return 'Maximal zwei Nachkommastellen erlaubt.';
-                    }
-                    return null;
-                  },
                 ),
               ],
             ),
-          ),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.pop(context),
-              child: const Text('Abbrechen'),
+            content: Form(
+              key: formKey,
+              child: SingleChildScrollView(
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    Card(
+                      margin: const EdgeInsets.symmetric(vertical: 8.0),
+                      elevation: 2.0,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      child: InkWell(
+                        onTap: () {
+                          setStateDialog(() {
+                            isWhatIfMode = !isWhatIfMode;
+                            if (isWhatIfMode) {
+                              whatIfGradeValue = int.tryParse(
+                                      gradeController.text.isEmpty
+                                          ? '8'
+                                          : gradeController.text) ??
+                                  8;
+                              updateWhatIfAverages(whatIfGradeValue);
+                            } else {}
+                          });
+                        },
+                        borderRadius: BorderRadius.circular(12),
+                        child: Padding(
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 16.0, vertical: 12.0),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Icon(
+                                isWhatIfMode
+                                    ? Icons.edit_note_outlined
+                                    : Icons.calculate_outlined,
+                                color: Theme.of(context).colorScheme.primary,
+                              ),
+                              const SizedBox(width: 8),
+                              Text(
+                                isWhatIfMode
+                                    ? 'Note Hinzufügen'
+                                    : 'What if...?',
+                                style: const TextStyle(
+                                    fontWeight: FontWeight.bold),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ),
+                    if (!isWhatIfMode) ...[
+                      TextFormField(
+                        controller: gradeController,
+                        keyboardType: TextInputType.number,
+                        decoration: const InputDecoration(
+                          labelText: 'Note (0-15)',
+                          hintText: '13',
+                        ),
+                        validator: (value) {
+                          if (value == null || value.isEmpty) {
+                            return 'Bitte eine Note eingeben.';
+                          }
+                          final intValue = int.tryParse(value);
+                          if (intValue == null ||
+                              intValue < 0 ||
+                              intValue > 15) {
+                            return 'Note muss zwischen 0 und 15 liegen.';
+                          }
+                          return null;
+                        },
+                      ),
+                      const SizedBox(height: 16),
+                      TextFormField(
+                        controller: descriptionController,
+                        decoration: InputDecoration(
+                          labelText: 'Beschreibung',
+                          hintText: isMajor ? 'Klausur' : 'Mündliche Note',
+                        ),
+                        validator: (value) {
+                          if (value == null || value.isEmpty) {
+                            descriptionController.text =
+                                isMajor ? 'Klausur' : 'Mündliche Note';
+                          }
+                          return null;
+                        },
+                      ),
+                    ] else ...[
+                      Text('Wenn du folgende Note bekommst:',
+                          style: Theme.of(context).textTheme.titleMedium),
+                      const SizedBox(height: 8),
+                      Row(
+                        children: [
+                          Expanded(
+                            child: Slider(
+                              value: whatIfGradeValue.toDouble(),
+                              min: 0,
+                              max: 15,
+                              divisions: 15,
+                              label: whatIfGradeValue.toString(),
+                              activeColor: _getGradeColor(whatIfGradeValue),
+                              inactiveColor: _getGradeColor(whatIfGradeValue)
+                                  .withOpacity(0.3),
+                              onChanged: (double value) {
+                                setStateDialog(() {
+                                  whatIfGradeValue = value.toInt();
+                                  updateWhatIfAverages(whatIfGradeValue);
+                                });
+                              },
+                            ),
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.only(left: 16.0),
+                            child: Text(whatIfGradeValue.toString(),
+                                style: Theme.of(context)
+                                    .textTheme
+                                    .headlineSmall
+                                    ?.copyWith(
+                                        color:
+                                            _getGradeColor(whatIfGradeValue))),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 20),
+                      Text('Neuer Fachschnitt:',
+                          style: Theme.of(context).textTheme.titleSmall),
+                      Text(whatIfSubjectAverage.toStringAsFixed(2),
+                          style: Theme.of(context).textTheme.titleLarge),
+                      const SizedBox(height: 12),
+                      Text('Neuer Halbjahrsschnitt:',
+                          style: Theme.of(context).textTheme.titleSmall),
+                      Text(whatIfSemesterAverage.toStringAsFixed(2),
+                          style: Theme.of(context).textTheme.titleLarge),
+                      const SizedBox(height: 16),
+                    ],
+                    if (!isMajor)
+                      TextFormField(
+                        controller: weightController,
+                        keyboardType: const TextInputType.numberWithOptions(
+                            decimal: true),
+                        decoration: const InputDecoration(
+                          labelText: 'Gewichtung (0.5 - 4.0)',
+                          hintText: '1.0',
+                        ),
+                        onChanged: (_) {
+                          if (isWhatIfMode) {
+                            setStateDialog(() {
+                              updateWhatIfAverages(whatIfGradeValue);
+                            });
+                          }
+                        },
+                        validator: (value) {
+                          if (value == null || value.isEmpty) {
+                            return 'Bitte eine Gewichtung eingeben.';
+                          }
+                          final doubleValue =
+                              double.tryParse(value.replaceFirst(',', '.'));
+                          if (doubleValue == null) {
+                            return 'Ungültige Zahl.';
+                          }
+                          if (doubleValue < 0.5 || doubleValue > 4.0) {
+                            return 'Gewichtung muss zwischen 0.5 und 4.0 liegen.';
+                          }
+                          String normalizedValue = doubleValue.toString();
+                          if (normalizedValue.contains('.')) {
+                            normalizedValue =
+                                normalizedValue.replaceAll(RegExp(r'0*$'), '');
+                            normalizedValue =
+                                normalizedValue.replaceAll(RegExp(r'\.$'), '');
+                          }
+                          final parts = normalizedValue.split('.');
+                          if (parts.length > 1 && parts[1].length > 2) {
+                            return 'Maximal zwei Nachkommastellen erlaubt.';
+                          }
+                          return null;
+                        },
+                      ),
+                  ],
+                ),
+              ),
             ),
-            TextButton(
-              onPressed: () {
-                if (_formKey.currentState!.validate()) {
-                  final value = int.tryParse(gradeController.text);
-                  final description = descriptionController.text;
-                  final weight = double.parse(
-                      weightController.text.replaceFirst(',', '.'));
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.pop(dialogContext),
+                child: const Text('Abbrechen'),
+              ),
+              if (!isWhatIfMode)
+                TextButton(
+                  onPressed: () {
+                    if (formKey.currentState!.validate()) {
+                      final value = int.tryParse(gradeController.text);
+                      final description = descriptionController.text;
+                      final weight = double.parse(
+                          weightController.text.replaceFirst(',', '.'));
 
-                  if (value != null && description.isNotEmpty) {
-                    final newGrade = Grade(
-                      id: const Uuid().v4(),
-                      value: value,
-                      description: description,
-                      date: DateTime.now(),
-                      weight: weight,
-                      type: isMajor ? GradeType.big : GradeType.small,
-                    );
-                    Provider.of<AppState>(context, listen: false)
-                        .addGradeToSubject(subject.id, newGrade);
-                    Navigator.pop(context);
-                  } else {
-                    ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-                        content: Text('Bitte alle Felder korrekt ausfüllen.')));
-                  }
-                }
-              },
-              child: const Text('Speichern'),
-            ),
-          ],
-        ),
+                      if (value != null && description.isNotEmpty) {
+                        final newGrade = Grade(
+                          id: const Uuid().v4(),
+                          value: value,
+                          description: description,
+                          date: DateTime.now(),
+                          semester:
+                              Provider.of<AppState>(context, listen: false)
+                                  .semester,
+                          weight: weight,
+                          type: isMajor ? GradeType.big : GradeType.small,
+                        );
+                        Provider.of<AppState>(context, listen: false)
+                            .addGradeToSubject(subject.id, newGrade);
+                        Navigator.pop(dialogContext);
+                      } else {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(
+                                content: Text(
+                                    'Bitte alle Felder korrekt ausfüllen.')));
+                      }
+                    }
+                  },
+                  child: const Text('Speichern'),
+                ),
+            ],
+          );
+        },
       ),
     );
   }

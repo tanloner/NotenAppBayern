@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_colorpicker/flutter_colorpicker.dart';
 import 'package:provider/provider.dart';
@@ -42,7 +44,9 @@ class _SetupScreenState extends State<SetupScreen> {
     _setupSubjects = Config.allSubjects.map((name) {
       bool isSelected = (name == 'Mathematik' || name == 'Deutsch');
       bool isLk = (name == 'Mathematik' || name == 'Deutsch');
-      Color color = Colors.grey.shade400;
+      var rng = Random();
+      Color color = Color.fromARGB(rng.nextInt(256), rng.nextInt(256),
+          rng.nextInt(256), rng.nextInt(256)); //Colors.grey.shade400;
       if (name == 'Mathematik') color = Colors.blue;
       if (name == 'Deutsch') color = Colors.red;
 

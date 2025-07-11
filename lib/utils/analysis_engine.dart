@@ -4,6 +4,8 @@ import '../models/calendar_event.dart';
 import '../models/grade.dart';
 import '../models/subject.dart';
 
+//TODO: überall in den analysen die "pro semester" logik hinzufügen
+
 class AnalysisResult {
   final String title;
   final dynamic value;
@@ -309,14 +311,12 @@ class ProgrammableAnalysisEngine {
       final gradeData = args[0] as GradeData;
       final chartData = <Map<String, dynamic>>[];
 
-      // Sort grades by date
       final sortedGrades = List<Grade>.from(gradeData.grades)
         ..sort((a, b) => a.date.compareTo(b.date));
 
       for (int i = 0; i < sortedGrades.length; i++) {
         final grade = sortedGrades[i];
 
-        // Calculate running average
         final gradesUpToNow = sortedGrades.take(i + 1).toList();
         final totalWeighted =
             gradesUpToNow.fold(0.0, (sum, g) => sum + (g.value * g.weight));
@@ -374,7 +374,6 @@ class ProgrammableAnalysisEngine {
     throw Exception('show_pie() currently only supports GradeData');
   }
 
-// For subject comparison (bar chart showing average per subject)
   dynamic _functionShowSubjects(List<dynamic> args) {
     if (args.isEmpty) throw Exception('show_subjects() requires data');
 
@@ -384,7 +383,6 @@ class ProgrammableAnalysisEngine {
 
       for (final subject in subjectData.subjects) {
         if (subject.grades.isNotEmpty) {
-          // Only show subjects with grades
           chartData.add({
             'label': subject.name,
             'value': subject.averageGrade,
