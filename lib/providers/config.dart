@@ -21,7 +21,7 @@ class Config {
     "Wirtschaft und Recht",
     "Geographie",
     "Ethik",
-    "Regligion",
+    "Religion",
     "Musik",
     "Kunst",
     "Sport",
