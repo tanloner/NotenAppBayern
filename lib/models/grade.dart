@@ -1,11 +1,21 @@
+/// The type of a grade.
 enum GradeType { big, small, other }
 
+/// The semester a grade belongs to.
 enum Semester {
+  /// The first semester of the 2024/25 school year.
   first,
+
+  /// The second semester of the 2024/25 school year.
   second,
+
+  /// The first semester of the 2025/26 school year.
   third,
+
+  /// The second semester of the 2025/26 school year.
   fourth;
 
+  /// The display name of the semester.
   String get displayName {
     switch (this) {
       case Semester.first:
@@ -19,6 +29,7 @@ enum Semester {
     }
   }
 
+  /// Creates a [Semester] from a string.
   static Semester fromString(String value) {
     switch (value) {
       case '1. Halbjahr 2024/25':
@@ -35,15 +46,30 @@ enum Semester {
   }
 }
 
+/// Represents a single grade.
 class Grade {
+  /// The unique identifier of the grade.
   final String id;
+
+  /// The value of the grade.
   final int value;
+
+  /// The description of the grade.
   final String description;
+
+  /// The date of the grade.
   final DateTime date;
+
+  /// The weight of the grade.
   final double weight;
+
+  /// The type of the grade.
   final GradeType type;
+
+  /// The semester the grade belongs to.
   final Semester semester;
 
+  /// Creates a [Grade] instance.
   Grade(
       {required this.id,
       required this.value,
@@ -53,6 +79,7 @@ class Grade {
       this.weight = 1.0,
       this.type = GradeType.other});
 
+  /// Converts the [Grade] to a JSON object.
   Map<String, dynamic> toJson() {
     return {
       'id': id,
@@ -65,10 +92,12 @@ class Grade {
     };
   }
 
+  /// Whether the grade is a big grade.
   bool get isBig {
     return type == GradeType.big;
   }
 
+  /// Creates a [Grade] from a JSON object.
   factory Grade.fromJson(Map<String, dynamic> json) {
     return Grade(
       id: json['id'],

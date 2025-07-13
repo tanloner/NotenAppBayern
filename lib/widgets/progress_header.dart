@@ -4,7 +4,9 @@ import 'package:provider/provider.dart';
 import '../providers/app_state.dart';
 import 'circular_progress_widget.dart';
 
+/// A widget that displays the user's progress towards their target grade.
 class ProgressHeader extends StatelessWidget {
+  /// Creates a [ProgressHeader].
   const ProgressHeader({super.key});
 
   @override

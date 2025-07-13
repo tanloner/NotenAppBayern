@@ -23,7 +23,9 @@ class _SetupSubject {
   });
 }
 
+/// A screen for setting up the app for the first time.
 class SetupScreen extends StatefulWidget {
+  /// Creates a [SetupScreen].
   const SetupScreen({super.key});
 
   @override
@@ -126,8 +128,8 @@ class _SetupScreenState extends State<SetupScreen> {
         child: Column(
           children: [
             Padding(
-              padding:
-                  const EdgeInsets.symmetric(vertical: 24.0, horizontal: 16.0),
+              padding: const EdgeInsets.symmetric(
+                  vertical: 24.0, horizontal: 16.0),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: List.generate(
@@ -193,7 +195,8 @@ class _SetupScreenState extends State<SetupScreen> {
                     borderRadius: BorderRadius.circular(12))),
           ),
           const SizedBox(height: 32),
-          Text("Dein Notenziel", style: Theme.of(context).textTheme.titleLarge),
+          Text("Dein Notenziel",
+              style: Theme.of(context).textTheme.titleLarge),
           Row(
             children: [
               Expanded(

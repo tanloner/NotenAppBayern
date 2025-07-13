@@ -6,7 +6,12 @@ import '../widgets/calendar_preview.dart';
 import '../widgets/progress_header.dart';
 import '../widgets/subject_card.dart';
 
+/// The home screen of the application.
+///
+/// This screen displays the user's subjects, a progress header, and a calendar
+/// preview.
 class HomeScreen extends StatelessWidget {
+  /// Creates a [HomeScreen].
   const HomeScreen({super.key});
 
   @override

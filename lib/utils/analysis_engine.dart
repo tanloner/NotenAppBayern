@@ -6,13 +6,24 @@ import '../models/subject.dart';
 
 //TODO: überall in den analysen die "pro semester" logik hinzufügen
 
+/// The result of an analysis.
 class AnalysisResult {
+  /// The title of the result.
   final String title;
+
+  /// The value of the result.
   final dynamic value;
+
+  /// The type of the result.
   final String type;
+
+  /// The chart data of the result, if any.
   final List<Map<String, dynamic>>? chartData;
+
+  /// The error of the result, if any.
   final String? error;
 
+  /// Creates an [AnalysisResult].
   AnalysisResult({
     required this.title,
     this.value,
@@ -22,46 +33,69 @@ class AnalysisResult {
   });
 }
 
+/// A data class for a list of grades.
 class GradeData {
+  /// The list of grades.
   final List<Grade> grades;
+
+  /// Creates a [GradeData].
   GradeData(this.grades);
 
   @override
   String toString() => 'GradeData(${grades.length} grades)';
 }
 
+/// A data class for a list of subjects.
 class SubjectData {
+  /// The list of subjects.
   final List<Subject> subjects;
+
+  /// Creates a [SubjectData].
   SubjectData(this.subjects);
 
   @override
   String toString() => 'SubjectData(${subjects.length} subjects)';
 }
 
+/// A data class for a number.
 class NumberData {
+  /// The value of the number.
   final double value;
+
+  /// Creates a [NumberData].
   NumberData(this.value);
 
   @override
   String toString() => value.toString();
 }
 
+/// A data class for a list of items.
 class ListData {
+  /// The list of items.
   final List<dynamic> items;
+
+  /// Creates a [ListData].
   ListData(this.items);
 
   @override
   String toString() => 'ListData(${items.length} items)';
 }
 
+/// A programmable analysis engine for analyzing grades and subjects.
 class ProgrammableAnalysisEngine {
+  /// The list of subjects.
   final List<Subject> subjects;
+
+  /// The list of calendar events.
   final List<CalendarEvent> events;
 
+  /// Creates a [ProgrammableAnalysisEngine].
   ProgrammableAnalysisEngine({required this.subjects, required this.events});
 
+  /// A list of all grades.
   List<Grade> get allGrades => subjects.expand((s) => s.grades).toList();
 
+  /// Executes an expression and returns the result.
   AnalysisResult executeExpression(String expression) {
     try {
       final result = _evaluateExpression(expression);
@@ -156,12 +190,14 @@ class ProgrammableAnalysisEngine {
   }
 
   bool _isFunctionCall(String expr) {
-    return RegExp(r'^[a-zA-Z_][a-zA-Z0-9_]*\s*\(.*\)$').hasMatch(expr);
+    return RegExp(r'^[a-zA-Z_][a-zA-Z0-9_]*\s*\(.*\)
+).hasMatch(expr);
   }
 
   dynamic _evaluateFunction(String expr) {
     final match =
-        RegExp(r'^([a-zA-Z_][a-zA-Z0-9_]*)\s*\((.*)\)$').firstMatch(expr);
+        RegExp(r'^([a-zA-Z_][a-zA-Z0-9_]*)\s*\((.*)\)
+).firstMatch(expr);
     if (match == null) throw Exception('Invalid function call: $expr');
 
     final functionName = match.group(1)!;
@@ -672,6 +708,7 @@ class ProgrammableAnalysisEngine {
     return null;
   }
 
+  /// A list of strings that explain how to use the programmable analysis language.
   static List<String> get programmingHelpText => [
         //TODO: a help function for each function
         'PROGRAMMABLE ANALYSIS LANGUAGE (v2)',

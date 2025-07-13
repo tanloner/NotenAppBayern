@@ -5,7 +5,9 @@ import '../models/calendar_event.dart';
 import '../models/subject.dart';
 import '../providers/app_state.dart';
 
+/// A widget that displays a preview of the calendar.
 class CalendarPreview extends StatelessWidget {
+  /// Creates a [CalendarPreview].
   const CalendarPreview({super.key});
 
   @override

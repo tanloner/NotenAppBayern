@@ -3,7 +3,9 @@ import 'package:provider/provider.dart';
 
 import '../providers/app_state.dart';
 
+/// A screen for changing the app's settings.
 class SettingsScreen extends StatelessWidget {
+  /// Creates a [SettingsScreen].
   const SettingsScreen({super.key});
 
   @override

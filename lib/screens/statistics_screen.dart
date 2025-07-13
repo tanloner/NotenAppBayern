@@ -4,7 +4,9 @@ import 'package:provider/provider.dart';
 import '../models/subject.dart';
 import '../providers/app_state.dart';
 
+/// A screen that displays statistics about the user's grades.
 class StatisticsScreen extends StatelessWidget {
+  /// Creates a [StatisticsScreen].
   const StatisticsScreen({super.key});
 
   @override

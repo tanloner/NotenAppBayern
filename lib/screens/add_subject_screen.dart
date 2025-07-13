@@ -7,7 +7,9 @@ import '../models/subject.dart';
 import '../providers/app_state.dart';
 import '../providers/config.dart';
 
+/// A screen for adding a new subject.
 class AddSubjectScreen extends StatefulWidget {
+  /// Creates an [AddSubjectScreen].
   const AddSubjectScreen({super.key});
 
   @override
