@@ -5,7 +5,9 @@ import '../models/calendar_event.dart';
 import '../models/subject.dart';
 import '../providers/app_state.dart';
 
+/// A screen that displays a calendar of events.
 class CalendarScreen extends StatefulWidget {
+  /// Creates a [CalendarScreen].
   const CalendarScreen({super.key});
 
   @override
@@ -437,8 +439,7 @@ class _CalendarScreenState extends State<CalendarScreen> {
                   builder: (context, appState, child) {
                     return DropdownButtonFormField<String?>(
                       value: selectedSubjectId,
-                      decoration:
-                          const InputDecoration(labelText: 'Fach (optional)'),
+                      decoration: const InputDecoration(labelText: 'Fach (optional)'),
                       items: [
                         const DropdownMenuItem<String?>(
                           value: null,

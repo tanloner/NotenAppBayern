@@ -4,9 +4,12 @@ import 'package:provider/provider.dart';
 import '../models/subject.dart';
 import '../providers/app_state.dart';
 
+/// A card that displays information about a subject.
 class SubjectCard extends StatelessWidget {
+  /// The subject to display.
   final Subject subject;
 
+  /// Creates a [SubjectCard].
   const SubjectCard({
     super.key,
     required this.subject,

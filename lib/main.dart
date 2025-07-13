@@ -11,6 +11,9 @@ import 'screens/home_screen.dart';
 import 'screens/settings_screen.dart';
 import 'screens/subject_detail_screen.dart';
 
+/// The entry point of the application.
+///
+/// This function initializes the [AppState] and runs the [NotesApp].
 void main() {
   runApp(
     ChangeNotifierProvider(
@@ -20,7 +23,12 @@ void main() {
   );
 }
 
+/// The root widget of the application.
+///
+/// This widget sets up the [MaterialApp] with the necessary themes, routes,
+/// and home page.
 class NotesApp extends StatelessWidget {
+  /// Creates a [NotesApp] widget.
   const NotesApp({super.key});
 
   @override

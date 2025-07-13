@@ -1,11 +1,24 @@
+/// Represents a single event in the calendar.
 class CalendarEvent {
+  /// The unique identifier of the event.
   final String id;
+
+  /// The title of the event.
   final String title;
+
+  /// The description of the event.
   final String description;
+
+  /// The date of the event.
   final DateTime date;
+
+  /// The type of the event.
   final EventType type;
+
+  /// The ID of the subject this event belongs to, if any.
   final String? subjectId;
 
+  /// Creates a [CalendarEvent] instance.
   CalendarEvent({
     required this.id,
     required this.title,
@@ -15,6 +28,7 @@ class CalendarEvent {
     this.subjectId,
   });
 
+  /// Converts the [CalendarEvent] to a JSON object.
   Map<String, dynamic> toJson() {
     return {
       'id': id,
@@ -26,6 +40,7 @@ class CalendarEvent {
     };
   }
 
+  /// Creates a [CalendarEvent] from a JSON object.
   factory CalendarEvent.fromJson(Map<String, dynamic> json) {
     return CalendarEvent(
       id: json['id'],
@@ -37,6 +52,8 @@ class CalendarEvent {
     );
   }
 
+  /// Creates a copy of this [CalendarEvent] with the given fields replaced
+  /// with the new values.
   CalendarEvent copyWith({
     String? title,
     String? description,
@@ -55,16 +72,30 @@ class CalendarEvent {
   }
 }
 
+/// The type of a calendar event.
 enum EventType {
+  /// A test.
   test,
+
+  /// A quiz.
   quiz,
+
+  /// Homework.
   homework,
+
+  /// A project.
   project,
+
+  /// A presentation.
   presentation,
+
+  /// Other.
   other,
 }
 
+/// An extension on [EventType] to provide a display name and an icon.
 extension EventTypeExtension on EventType {
+  /// The display name of the event type.
   String get displayName {
     switch (this) {
       case EventType.test:
@@ -82,6 +113,7 @@ extension EventTypeExtension on EventType {
     }
   }
 
+  /// The icon of the event type.
   String get icon {
     switch (this) {
       case EventType.test:

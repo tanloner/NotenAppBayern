@@ -2,13 +2,24 @@ import 'package:flutter/material.dart';
 
 import 'grade.dart';
 
+/// Represents a single subject.
 class Subject {
+  /// The unique identifier of the subject.
   final String id;
+
+  /// The name of the subject.
   String name;
+
+  /// The list of grades in the subject.
   final List<Grade> grades;
+
+  /// The color of the subject.
   Color color;
+
+  /// Whether the subject is a major subject.
   bool isLk;
 
+  /// Creates a [Subject] instance.
   Subject(
       {required this.id,
       required this.name,
@@ -16,6 +27,7 @@ class Subject {
       this.color = Colors.blue,
       this.isLk = false});
 
+  /// The average grade of the subject.
   double get averageGrade {
     /*    if (grades.isEmpty) return 0.0;
     double sum =
@@ -42,6 +54,7 @@ class Subject {
     return (smallGrade + bigGrade) / 2;
   }
 
+  /// The average grade of the subject in a specific semester.
   double averageGradeSemester(Semester semester) {
     List<Grade> semesterGrades =
         grades.where((grade) => grade.semester == semester).toList();
@@ -61,6 +74,7 @@ class Subject {
     return (smallGrade + bigGrade) / 2;
   }
 
+  /// The global average grade of the subject across all semesters.
   double get globalAverage {
     if (grades.isEmpty) return 0.0;
     double sum = averageGradeSemester(Semester.first) +
@@ -72,32 +86,39 @@ class Subject {
     return lengthWithout0 > 0 ? sum / lengthWithout0 : 0.0;
   }
 
+  /// The list of grades in a specific semester.
   List<Grade> semesterGrades(Semester semester) {
     List<Grade> semesterGrades =
         grades.where((grade) => grade.semester == semester).toList();
     return semesterGrades;
   }
 
+  /// Whether the subject has a big grade.
   bool get hasBigGrade {
     return grades.any((grade) => grade.type == GradeType.big);
   }
 
+  /// The amount of grades in the subject.
   int get amountGrades {
     return grades.length;
   }
 
+  /// Sets the new name of the subject.
   void setNewName(String newName) {
     name = newName;
   }
 
+  /// Sets the new color of the subject.
   void setNewColor(Color newColor) {
     color = newColor;
   }
 
+  /// Sets whether the subject is a major subject.
   void setIsLk(bool isLk) {
     isLk = isLk;
   }
 
+  /// Converts the [Subject] to a JSON object.
   Map<String, dynamic> toJson() {
     return {
       'id': id,
@@ -109,6 +130,7 @@ class Subject {
     };
   }
 
+  /// Creates a [Subject] from a JSON object.
   factory Subject.fromJson(Map<String, dynamic> json) {
     return Subject(
       id: json['id'],
@@ -120,6 +142,8 @@ class Subject {
     );
   }
 
+  /// Creates a copy of this [Subject] with the given fields replaced
+  /// with the new values.
   Subject copyWith({
     String? name,
     Color? color,

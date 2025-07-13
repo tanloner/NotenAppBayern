@@ -7,7 +7,9 @@ import '../utils/analysis_engine.dart';
 import '../widgets/custom_analysis_widget.dart';
 import '../widgets/statistics_charts.dart';
 
+/// A screen that displays comprehensive statistics about the user's grades.
 class ComprehensiveStatisticsScreen extends StatefulWidget {
+  /// Creates a [ComprehensiveStatisticsScreen].
   const ComprehensiveStatisticsScreen({super.key});
 
   @override

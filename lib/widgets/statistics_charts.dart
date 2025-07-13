@@ -3,9 +3,12 @@ import 'package:flutter/material.dart';
 
 import '../providers/app_state.dart';
 
+/// A widget that displays statistics charts.
 class StatisticsCharts extends StatelessWidget {
+  /// The app state.
   final AppState appState;
 
+  /// Creates a [StatisticsCharts].
   const StatisticsCharts({super.key, required this.appState});
 
   @override
@@ -42,8 +45,8 @@ class StatisticsCharts extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(title,
-                style:
-                    const TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+                style: const TextStyle(
+                    fontSize: 18, fontWeight: FontWeight.bold)),
             const SizedBox(height: 4),
             Text(description,
                 style: TextStyle(color: Colors.grey[600], fontSize: 12)),

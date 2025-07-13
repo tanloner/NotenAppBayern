@@ -1,0 +1,50 @@
+classDiagram
+    class AppState {
+        List<Subject> _subjects
+        List<CalendarEvent> _calendarEvents
+        +loadData()
+        +addSubject()
+        +addCalendarEvent()
+        ...
+    }
+    class Subject {
+        String id
+        String name
+        List<Grade> grades
+        Color color
+        bool isLk
+    }
+    class Grade {
+        GradeType type
+        Semester semester
+        int value
+        double weight
+        DateTime date
+    }
+    class CalendarEvent {
+        String id
+        String title
+        String description
+        DateTime date
+        EventType type
+        String? subjectId
+    }
+    class ProgrammableAnalysisEngine {
+        List<Subject> subjects
+        List<CalendarEvent> events
+        +executeExpression()
+    }
+    class _SetupSubject {
+        String name
+        bool isSelected
+        bool isLk
+        Color color
+    }
+
+    AppState "1" --> "*" Subject : manages
+    AppState "1" --> "*" CalendarEvent : manages
+    Subject "1" --> "*" Grade : contains
+    CalendarEvent "0..1" --> "1" Subject : subjectId
+    ProgrammableAnalysisEngine "1" --> "*" Subject : analyzes
+    ProgrammableAnalysisEngine "1" --> "*" CalendarEvent : analyzes
+    SetupScreen --> _SetupSubject : uses

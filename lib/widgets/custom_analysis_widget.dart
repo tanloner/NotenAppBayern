@@ -4,9 +4,12 @@ import 'package:flutter/material.dart';
 import '../providers/app_state.dart';
 import '../utils/analysis_engine.dart';
 
+/// A widget for performing custom analysis of the user's grades.
 class CustomAnalysisWidget extends StatefulWidget {
+  /// The app state.
   final AppState appState;
 
+  /// Creates a [CustomAnalysisWidget].
   const CustomAnalysisWidget({super.key, required this.appState});
 
   @override

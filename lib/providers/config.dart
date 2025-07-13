@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 
+/// A class to hold configuration data for the app.
 class Config {
+  /// A list of all possible subjects.
   static List<String> allSubjects = [
     "Deutsch",
     "Englisch",
@@ -19,12 +21,14 @@ class Config {
     "Wirtschaft und Recht",
     "Geographie",
     "Ethik",
-    "Regligion",
+    "Religion",
     "Musik",
     "Kunst",
     "Sport",
     "W-Seminar"
   ];
+
+  /// A list of all available colors for subjects.
   static final List<Color> availableColors = [
     Colors.blue,
     Colors.red,

@@ -2,11 +2,18 @@ import 'dart:math';
 
 import 'package:flutter/material.dart';
 
+/// A widget that displays a circular progress bar.
 class CircularProgressWidget extends StatelessWidget {
+  /// The progress of the circular progress bar.
   final double progress;
+
+  /// The current grade.
   final double currentGrade;
+
+  /// The target grade.
   final double targetGrade;
 
+  /// Creates a [CircularProgressWidget].
   const CircularProgressWidget({
     super.key,
     required this.progress,
@@ -71,12 +78,21 @@ class CircularProgressWidget extends StatelessWidget {
   }
 }
 
+/// A painter for the circular progress bar.
 class SemicircleProgressPainter extends CustomPainter {
+  /// The progress of the circular progress bar.
   final double progress;
+
+  /// The background color of the circular progress bar.
   final Color backgroundColor;
+
+  /// The progress color of the circular progress bar.
   final Color progressColor;
+
+  /// The stroke width of the circular progress bar.
   final double strokeWidth;
 
+  /// Creates a [SemicircleProgressPainter].
   SemicircleProgressPainter({
     required this.progress,
     required this.backgroundColor,
