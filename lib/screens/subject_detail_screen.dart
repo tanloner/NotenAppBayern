@@ -731,11 +731,9 @@ class SubjectDetailScreen extends StatelessWidget {
                           String normalizedValue = doubleValue.toString();
                           if (normalizedValue.contains('.')) {
                             normalizedValue =
-                                normalizedValue.replaceAll(RegExp(r'0*
-), '');
+                                normalizedValue.replaceAll(RegExp(r'0*$'), '');
                             normalizedValue =
-                                normalizedValue.replaceAll(RegExp(r'\.
-), '');
+                                normalizedValue.replaceAll(RegExp(r'\.$'), '');
                           }
                           final parts = normalizedValue.split('.');
                           if (parts.length > 1 && parts[1].length > 2) {

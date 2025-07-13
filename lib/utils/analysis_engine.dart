@@ -190,14 +190,12 @@ class ProgrammableAnalysisEngine {
   }
 
   bool _isFunctionCall(String expr) {
-    return RegExp(r'^[a-zA-Z_][a-zA-Z0-9_]*\s*\(.*\)
-).hasMatch(expr);
+    return RegExp(r'^[a-zA-Z_][a-zA-Z0-9_]*\s*\(.*\)$').hasMatch(expr);
   }
 
   dynamic _evaluateFunction(String expr) {
     final match =
-        RegExp(r'^([a-zA-Z_][a-zA-Z0-9_]*)\s*\((.*)\)
-).firstMatch(expr);
+    RegExp(r'^([a-zA-Z_][a-zA-Z0-9_]*)\s*\((.*)\)$').firstMatch(expr);
     if (match == null) throw Exception('Invalid function call: $expr');
 
     final functionName = match.group(1)!;
