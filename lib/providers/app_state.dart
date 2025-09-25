@@ -17,7 +17,7 @@ class AppState extends ChangeNotifier {
   double _targetGrade = 15.0;
   bool _isDarkMode = false;
   String _currentSemester =
-      '1. Halbjahr 2024/25'; //TODO: init depending on current date
+      '1. Halbjahr'; //TODO: init depending on current date
   bool _isFirstLaunch = true;
 
   /// The list of subjects.
@@ -247,7 +247,7 @@ class AppState extends ChangeNotifier {
       _isFirstLaunch = prefs.getBool('isFirstLaunch') ?? true;
       final isDark = prefs.getBool('isDarkMode') ?? false;
       final semester =
-          prefs.getString('currentSemester') ?? '1. Halbjahr 2024/25';
+          prefs.getString('currentSemester') ?? '1. Halbjahr';
 
       _isDarkMode = isDark;
       _currentSemester = semester;

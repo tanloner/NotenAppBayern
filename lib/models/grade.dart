@@ -3,42 +3,42 @@ enum GradeType { big, small, other }
 
 /// The semester a grade belongs to.
 enum Semester {
-  /// The first semester of the 2024/25 school year.
+  /// The first semester of the  school year.
   first,
 
-  /// The second semester of the 2024/25 school year.
+  /// The second semester of the  school year.
   second,
 
-  /// The first semester of the 2025/26 school year.
+  /// The first semester of the  school year.
   third,
 
-  /// The second semester of the 2025/26 school year.
+  /// The second semester of the school year.
   fourth;
 
   /// The display name of the semester.
   String get displayName {
     switch (this) {
       case Semester.first:
-        return '1. Halbjahr 2024/25';
+        return '1. Halbjahr';
       case Semester.second:
-        return '2. Halbjahr 2024/25';
+        return '2. Halbjahr';
       case Semester.third:
-        return '1. Halbjahr 2025/26';
+        return '3. Halbjahr';
       case Semester.fourth:
-        return '2. Halbjahr 2025/26';
+        return '4. Halbjahr';
     }
   }
 
   /// Creates a [Semester] from a string.
   static Semester fromString(String value) {
     switch (value) {
-      case '1. Halbjahr 2024/25':
+      case '1. Halbjahr':
         return Semester.first;
-      case '2. Halbjahr 2024/25':
+      case '2. Halbjahr':
         return Semester.second;
-      case '1. Halbjahr 2025/26':
+      case '3. Halbjahr':
         return Semester.third;
-      case '2. Halbjahr 2025/26':
+      case '4. Halbjahr':
         return Semester.fourth;
       default:
         throw ArgumentError('Unknown semester string: "$value"');

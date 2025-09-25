@@ -1,16 +1,28 @@
-# noten_app
+# 📘 NotenApp Bayern
 
-An application for Bavarian grades
+Eine Android-App zur Notenverwaltung – speziell angepasst an das bayerische Schulsystem.
 
-## Getting Started
+---
 
-This project is a starting point for a Flutter application.
+## 🔹 Funktionen
 
-A few resources to get you started if this is your first Flutter project:
+- Trennung von kleinen & großen Leistungsnachweisen
+- Korrekte Durchschnittsberechnung nach bayerischem Schema
+- Simulation neuer Noten
+- Kalender für Termine
+- Analyse mit Diagrammen (z. B. Balkenübersicht)aa
+- Zielnoten & Farbgestaltung pro Fach
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
+---
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+## 📥 Installation (nur Android)
+
+1. Übertrage die Datei `release.apk` auf dein Android-Gerät.
+2. Öffne die Datei auf dem Smartphone.
+3. Bestätige die Installation – Android zeigt möglicherweise eine Warnung („App stammt nicht aus dem Play Store“), diese kannst du ignorieren.
+
+---
+
+## ▶️ Anwendung
+
+Die App hilft Schüler:innen in Bayern dabei, ihre Noten zu verwalten, den echten Durchschnitt zu sehen und ihre Leistungen zu analysieren.

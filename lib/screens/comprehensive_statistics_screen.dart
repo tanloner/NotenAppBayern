@@ -93,7 +93,7 @@ class _ComprehensiveStatisticsScreenState
     final totalGrades = allGrades.length;
     final overallAverage = appState.overallAverage;
 
-    final subjects_have_different_avgs =
+    final subjectsHaveDifferentAvgs =
         (appState.subjects.where((s) => s.grades.isNotEmpty))
                 .map((s) => s.averageGrade)
                 .toSet()
@@ -101,7 +101,7 @@ class _ComprehensiveStatisticsScreenState
             1;
 
     final bestSubject = (appState.subjects.isNotEmpty &&
-            subjects_have_different_avgs)
+            subjectsHaveDifferentAvgs)
         ? appState.subjects.reduce((a, b) =>
             (a.averageGrade > b.averageGrade) && a.amountGrades != 0 ? a : b)
         : null;

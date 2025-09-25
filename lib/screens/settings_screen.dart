@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-
+import '../models/grade.dart';
 import '../providers/app_state.dart';
 
 /// A screen for changing the app's settings.
@@ -115,12 +115,8 @@ class SettingsScreen extends StatelessWidget {
 }
 
 void _showSemesterDialog(BuildContext context, AppState appState) {
-  final semesters = [
-    '1. Halbjahr 2024/25',
-    '2. Halbjahr 2024/25',
-    '1. Halbjahr 2025/26',
-    '2. Halbjahr 2025/26',
-  ];
+  final List<String> semesters = Semester.values.map((s) => s.displayName).toList(growable: false);
+
 
   showDialog(
     context: context,

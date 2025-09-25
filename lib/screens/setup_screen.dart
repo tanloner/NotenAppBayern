@@ -5,6 +5,7 @@ import 'package:flutter_colorpicker/flutter_colorpicker.dart';
 import 'package:provider/provider.dart';
 import 'package:uuid/uuid.dart';
 
+import '../models/grade.dart';
 import '../models/subject.dart';
 import '../providers/app_state.dart';
 import '../providers/config.dart';
@@ -36,7 +37,7 @@ class _SetupScreenState extends State<SetupScreen> {
   final PageController _pageController = PageController();
   int _currentPage = 0;
 
-  String _selectedSemester = '1. Halbjahr 2024/25';
+  String _selectedSemester = '1. Halbjahr';
   double _targetGrade = 12.0;
   late List<_SetupSubject> _setupSubjects;
 
@@ -183,12 +184,9 @@ class _SetupScreenState extends State<SetupScreen> {
           const SizedBox(height: 8),
           DropdownButtonFormField<String>(
             value: _selectedSemester,
-            items: [
-              '1. Halbjahr 2024/25',
-              '2. Halbjahr 2024/25',
-              '1. Halbjahr 2025/26',
-              '2. Halbjahr 2025/26'
-            ].map((s) => DropdownMenuItem(value: s, child: Text(s))).toList(),
+            items:
+            Semester.values.map((s) => s.displayName).toList(growable: false)
+                .map((s) => DropdownMenuItem(value: s, child: Text(s))).toList(),
             onChanged: (value) => setState(() => _selectedSemester = value!),
             decoration: InputDecoration(
                 border: OutlineInputBorder(
